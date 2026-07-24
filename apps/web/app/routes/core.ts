@@ -266,10 +266,7 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/members",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/members/page.tsx"
           ),
-          route(
-            ":workspaceSlug/settings/billing",
-            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/billing/page.tsx"
-          ),
+          // billing route removed in this fork (no paid plans / billing UI)
           route(
             ":workspaceSlug/settings/exports",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/exports/page.tsx"
