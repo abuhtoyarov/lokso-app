@@ -165,6 +165,27 @@ yandex_config_variables = [
     },
 ]
 
+vk_config_variables = [
+    {
+        "key": "VK_CLIENT_ID",
+        "value": os.environ.get("VK_CLIENT_ID"),
+        "category": "VK",
+        "is_encrypted": False,
+    },
+    {
+        "key": "VK_CLIENT_SECRET",
+        "value": os.environ.get("VK_CLIENT_SECRET"),
+        "category": "VK",
+        "is_encrypted": True,
+    },
+    {
+        "key": "ENABLE_VK_SYNC",
+        "value": os.environ.get("ENABLE_VK_SYNC", "0"),
+        "category": "VK",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -261,6 +282,7 @@ core_config_variables = [
     *gitlab_config_variables,
     *gitea_config_variables,
     *yandex_config_variables,
+    *vk_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,

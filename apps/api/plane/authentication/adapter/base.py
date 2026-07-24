@@ -130,6 +130,7 @@ class Adapter:
             "gitlab": "ENABLE_GITLAB_SYNC",
             "gitea": "ENABLE_GITEA_SYNC",
             "yandex": "ENABLE_YANDEX_SYNC",
+            "vk": "ENABLE_VK_SYNC",
         }
         config_key = provider_config_map.get(self.provider)
         if config_key:

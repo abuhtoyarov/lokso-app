@@ -40,7 +40,14 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f"{obj.key} configuration already exists"))
 
-        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED", "IS_YANDEX_ENABLED"]
+        keys = [
+            "IS_GOOGLE_ENABLED",
+            "IS_GITHUB_ENABLED",
+            "IS_GITLAB_ENABLED",
+            "IS_GITEA_ENABLED",
+            "IS_YANDEX_ENABLED",
+            "IS_VK_ENABLED",
+        ]
         for key in keys:
             # Create each missing IS_<PROVIDER>_ENABLED key individually so that
             # providers added in later releases are bootstrapped on existing
@@ -171,6 +178,28 @@ class Command(BaseCommand):
                     value = "0"
                 InstanceConfiguration.objects.create(
                     key="IS_YANDEX_ENABLED",
+                    value=value,
+                    category="AUTHENTICATION",
+                    is_encrypted=False,
+                )
+                self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
+            if key == "IS_VK_ENABLED":
+                (VK_CLIENT_ID,) = get_configuration_value(
+                    [
+                        {
+                            "key": "VK_CLIENT_ID",
+                            "default": os.environ.get("VK_CLIENT_ID", ""),
+                        }
+                    ]
+                )
+                # VK ID uses PKCE for the token exchange, so only the app id
+                # (client id) is required to enable the provider.
+                if bool(VK_CLIENT_ID):
+                    value = "1"
+                else:
+                    value = "0"
+                InstanceConfiguration.objects.create(
+                    key="IS_VK_ENABLED",
                     value=value,
                     category="AUTHENTICATION",
                     is_encrypted=False,

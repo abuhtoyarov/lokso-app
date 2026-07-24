@@ -56,6 +56,7 @@ class InstanceEndpoint(BaseAPIView):
             IS_GITLAB_ENABLED,
             IS_GITEA_ENABLED,
             IS_YANDEX_ENABLED,
+            IS_VK_ENABLED,
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
@@ -98,6 +99,10 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "IS_YANDEX_ENABLED",
                     "default": os.environ.get("IS_YANDEX_ENABLED", "0"),
                 },
+                {
+                    "key": "IS_VK_ENABLED",
+                    "default": os.environ.get("IS_VK_ENABLED", "0"),
+                },
                 {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",
@@ -139,6 +144,7 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
         data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
         data["is_yandex_enabled"] = IS_YANDEX_ENABLED == "1"
+        data["is_vk_enabled"] = IS_VK_ENABLED == "1"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
 

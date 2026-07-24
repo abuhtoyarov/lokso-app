@@ -57,6 +57,8 @@ class OauthAdapter(Adapter):
             return "GITEA_OAUTH_PROVIDER_ERROR"
         elif self.provider == "yandex":
             return "YANDEX_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "vk":
+            return "VK_OAUTH_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 

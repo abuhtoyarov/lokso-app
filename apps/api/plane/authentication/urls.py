@@ -48,6 +48,10 @@ from .views import (
     YandexOauthInitiateEndpoint,
     YandexCallbackSpaceEndpoint,
     YandexOauthInitiateSpaceEndpoint,
+    VKCallbackEndpoint,
+    VKOauthInitiateEndpoint,
+    VKCallbackSpaceEndpoint,
+    VKOauthInitiateSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -166,5 +170,18 @@ urlpatterns = [
         "spaces/yandex/callback/",
         YandexCallbackSpaceEndpoint.as_view(),
         name="space-yandex-callback",
+    ),
+    ## VK ID Oauth
+    path("vk/", VKOauthInitiateEndpoint.as_view(), name="vk-initiate"),
+    path("vk/callback/", VKCallbackEndpoint.as_view(), name="vk-callback"),
+    path(
+        "spaces/vk/",
+        VKOauthInitiateSpaceEndpoint.as_view(),
+        name="space-vk-initiate",
+    ),
+    path(
+        "spaces/vk/callback/",
+        VKCallbackSpaceEndpoint.as_view(),
+        name="space-vk-callback",
     ),
 ]
