@@ -6,7 +6,6 @@
 import json
 import secrets
 import os
-import requests
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
@@ -15,7 +14,6 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance, InstanceEdition
-from plane.license.bgtasks.telemetry_metrics import push_instance_metrics
 
 
 class Command(BaseCommand):
@@ -38,17 +36,10 @@ class Command(BaseCommand):
             return "v0.1.0"
 
     def check_for_latest_version(self, fallback_version):
-        try:
-            response = requests.get(
-                "https://api.github.com/repos/makeplane/plane/releases/latest",
-                timeout=10,
-            )
-            response.raise_for_status()
-            data = response.json()
-            return data.get("tag_name", fallback_version)
-        except Exception:
-            self.stdout.write("Error checking for latest version")
-            return fallback_version
+        # Network check against api.github.com removed in this fork:
+        # the instance never phones home; the current version is treated
+        # as the latest one.
+        return fallback_version
 
     def handle(self, *args, **options):
         # Check if the instance is registered
@@ -85,8 +76,5 @@ class Command(BaseCommand):
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"
             instance.edition = InstanceEdition.PLANE_COMMUNITY.value
             instance.save()
-
-        # Push instance metrics on registration
-        push_instance_metrics.delay()
 
         return
