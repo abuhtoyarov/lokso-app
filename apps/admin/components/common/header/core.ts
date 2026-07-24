@@ -14,6 +14,7 @@ export const CORE_HEADER_SEGMENT_LABELS: Record<string, string> = {
   github: "GitHub",
   gitlab: "GitLab",
   gitea: "Gitea",
+  yandex: "Yandex ID",
   workspace: "Workspace",
   create: "Create",
 };
