@@ -4,4 +4,11 @@
  * See the LICENSE file for details.
  */
 
-export type TInstanceAIConfigurationKeys = "LLM_API_KEY" | "LLM_MODEL";
+export type TInstanceAIConfigurationKeys =
+  | "LLM_API_KEY"
+  | "LLM_MODEL"
+  | "LLM_PROVIDER"
+  | "LLM_BASE_URL"
+  | "LLM_FOLDER_ID"
+  | "GIGACHAT_SCOPE"
+  | "LLM_TLS_VERIFY";
