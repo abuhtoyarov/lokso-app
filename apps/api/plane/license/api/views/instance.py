@@ -142,9 +142,9 @@ class InstanceEndpoint(BaseAPIView):
         # Slack client
         data["slack_client_id"] = SLACK_CLIENT_ID
 
-        # Posthog
-        data["posthog_api_key"] = POSTHOG_API_KEY
-        data["posthog_host"] = POSTHOG_HOST
+        # Posthog (telemetry removed in this fork; always disabled)
+        data["posthog_api_key"] = None
+        data["posthog_host"] = None
 
         # Unsplash
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
