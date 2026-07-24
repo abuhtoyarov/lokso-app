@@ -44,6 +44,10 @@ from .views import (
     GiteaOauthInitiateEndpoint,
     GiteaCallbackSpaceEndpoint,
     GiteaOauthInitiateSpaceEndpoint,
+    YandexCallbackEndpoint,
+    YandexOauthInitiateEndpoint,
+    YandexCallbackSpaceEndpoint,
+    YandexOauthInitiateSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -149,5 +153,18 @@ urlpatterns = [
         "spaces/gitea/callback/",
         GiteaCallbackSpaceEndpoint.as_view(),
         name="space-gitea-callback",
+    ),
+    ## Yandex Oauth
+    path("yandex/", YandexOauthInitiateEndpoint.as_view(), name="yandex-initiate"),
+    path("yandex/callback/", YandexCallbackEndpoint.as_view(), name="yandex-callback"),
+    path(
+        "spaces/yandex/",
+        YandexOauthInitiateSpaceEndpoint.as_view(),
+        name="space-yandex-initiate",
+    ),
+    path(
+        "spaces/yandex/callback/",
+        YandexCallbackSpaceEndpoint.as_view(),
+        name="space-yandex-callback",
     ),
 ]

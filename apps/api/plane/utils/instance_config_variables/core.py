@@ -144,6 +144,27 @@ gitea_config_variables = [
     },
 ]
 
+yandex_config_variables = [
+    {
+        "key": "YANDEX_CLIENT_ID",
+        "value": os.environ.get("YANDEX_CLIENT_ID"),
+        "category": "YANDEX",
+        "is_encrypted": False,
+    },
+    {
+        "key": "YANDEX_CLIENT_SECRET",
+        "value": os.environ.get("YANDEX_CLIENT_SECRET"),
+        "category": "YANDEX",
+        "is_encrypted": True,
+    },
+    {
+        "key": "ENABLE_YANDEX_SYNC",
+        "value": os.environ.get("ENABLE_YANDEX_SYNC", "0"),
+        "category": "YANDEX",
+        "is_encrypted": False,
+    },
+]
+
 smtp_config_variables = [
     {
         "key": "ENABLE_SMTP",
@@ -239,6 +260,7 @@ core_config_variables = [
     *github_config_variables,
     *gitlab_config_variables,
     *gitea_config_variables,
+    *yandex_config_variables,
     *smtp_config_variables,
     *llm_config_variables,
     *unsplash_config_variables,
