@@ -17,6 +17,7 @@ import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
 import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
+import vkLogo from "@/app/assets/logos/vk-logo.svg?url";
 import yandexLogo from "@/app/assets/logos/yandex-logo.svg?url";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
@@ -24,6 +25,7 @@ import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { VKConfiguration } from "@/components/authentication/vk-config";
 import { YandexConfiguration } from "@/components/authentication/yandex-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 
@@ -98,5 +100,13 @@ export const getCoreAuthenticationModesMap: (
     icon: <img src={yandexLogo} height={20} width={20} alt="Yandex ID Logo" />,
     config: <YandexConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_YANDEX_ENABLED",
+  },
+  vk: {
+    key: "vk",
+    name: "VK ID",
+    description: "Allow members to log in or sign up for Локсо with their VK accounts.",
+    icon: <img src={vkLogo} height={20} width={20} alt="VK ID Logo" />,
+    config: <VKConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_VK_ENABLED",
   },
 });

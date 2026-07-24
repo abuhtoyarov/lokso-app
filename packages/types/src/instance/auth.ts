@@ -11,7 +11,8 @@ export type TCoreInstanceAuthenticationModeKeys =
   | "github"
   | "gitlab"
   | "gitea"
-  | "yandex";
+  | "yandex"
+  | "vk";
 
 export type TInstanceAuthenticationModeKeys = TCoreInstanceAuthenticationModeKeys;
 
@@ -33,7 +34,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GITHUB_ENABLED"
   | "IS_GITLAB_ENABLED"
   | "IS_GITEA_ENABLED"
-  | "IS_YANDEX_ENABLED";
+  | "IS_YANDEX_ENABLED"
+  | "IS_VK_ENABLED";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys =
   | "GOOGLE_CLIENT_ID"
@@ -63,12 +65,15 @@ export type TInstanceYandexAuthenticationConfigurationKeys =
   | "YANDEX_CLIENT_SECRET"
   | "ENABLE_YANDEX_SYNC";
 
+export type TInstanceVKAuthenticationConfigurationKeys = "VK_CLIENT_ID" | "VK_CLIENT_SECRET" | "ENABLE_VK_SYNC";
+
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
   | TInstanceGitlabAuthenticationConfigurationKeys
   | TInstanceGiteaAuthenticationConfigurationKeys
-  | TInstanceYandexAuthenticationConfigurationKeys;
+  | TInstanceYandexAuthenticationConfigurationKeys
+  | TInstanceVKAuthenticationConfigurationKeys;
 
 export type TInstanceAuthenticationKeys = TInstanceAuthenticationMethodKeys | TInstanceAuthenticationConfigurationKeys;
 
@@ -91,4 +96,4 @@ export type TOAuthConfigs = {
   oAuthOptions: TOAuthOption[];
 };
 
-export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea" | "yandex";
+export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea" | "yandex" | "vk";

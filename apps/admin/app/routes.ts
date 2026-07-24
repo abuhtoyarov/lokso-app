@@ -20,6 +20,7 @@ export default [
     route("authentication/google", "./(all)/(dashboard)/authentication/google/page.tsx"),
     route("authentication/gitea", "./(all)/(dashboard)/authentication/gitea/page.tsx"),
     route("authentication/yandex", "./(all)/(dashboard)/authentication/yandex/page.tsx"),
+    route("authentication/vk", "./(all)/(dashboard)/authentication/vk/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),
     route("image", "./(all)/(dashboard)/image/page.tsx"),
   ]),

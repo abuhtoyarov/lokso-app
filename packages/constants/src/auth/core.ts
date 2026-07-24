@@ -14,4 +14,5 @@ export const CORE_LOGIN_MEDIUM_LABELS: Record<TCoreLoginMediums, string> = {
   google: "Google",
   gitea: "Gitea",
   yandex: "Yandex ID",
+  vk: "VK ID",
 };
