@@ -256,6 +256,34 @@ llm_config_variables = [
         "category": "AI",
         "is_encrypted": False,
     },
+    {
+        "key": "LLM_BASE_URL",
+        "value": os.environ.get("LLM_BASE_URL", ""),
+        "category": "AI",
+        "is_encrypted": False,
+    },
+    # Yandex Cloud folder id, used to build the gpt://<folder_id>/... model URI
+    {
+        "key": "LLM_FOLDER_ID",
+        "value": os.environ.get("LLM_FOLDER_ID", ""),
+        "category": "AI",
+        "is_encrypted": False,
+    },
+    # GigaChat OAuth scope: GIGACHAT_API_PERS (personal) / _B2B / _CORP
+    {
+        "key": "GIGACHAT_SCOPE",
+        "value": os.environ.get("GIGACHAT_SCOPE", "GIGACHAT_API_PERS"),
+        "category": "AI",
+        "is_encrypted": False,
+    },
+    # TLS verification for the LLM endpoint: "1"/"0" or a path to a CA bundle
+    # (GigaChat needs the Russian Trusted Root CA / НУЦ Минцифры).
+    {
+        "key": "LLM_TLS_VERIFY",
+        "value": os.environ.get("LLM_TLS_VERIFY", "1"),
+        "category": "AI",
+        "is_encrypted": False,
+    },
     # Deprecated, use LLM_MODEL
     {
         "key": "GPT_ENGINE",
