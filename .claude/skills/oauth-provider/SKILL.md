@@ -42,18 +42,20 @@ Fail closed: if the provider returns no email, reject the sign-in rather than fa
 
 ## Frontend touchpoints
 
-| File                                                                  | What to add                                               |
-| --------------------------------------------------------------------- | --------------------------------------------------------- |
-| `packages/types/src/instance/auth.ts`                                 | The provider's config keys in the auth configuration type |
-| `packages/types/src/instance/base.ts`                                 | The provider's enabled flag                               |
-| `packages/constants/src/auth/core.ts`                                 | The provider constant                                     |
-| `apps/admin/app/(all)/(dashboard)/authentication/<provider>/page.tsx` | Admin settings page                                       |
-| `apps/admin/app/(all)/(dashboard)/authentication/<provider>/form.tsx` | Client ID / secret form                                   |
-| `apps/admin/components/authentication/<provider>-config.tsx`          | The provider's row on the authentication list             |
-| `apps/admin/app/routes.ts`                                            | Route for the settings page                               |
-| `apps/admin/components/common/header/core.ts`                         | Breadcrumb entry                                          |
-| `apps/admin/hooks/oauth/core.tsx`                                     | Admin-side OAuth hook                                     |
-| `apps/web/core/hooks/oauth/core.tsx`                                  | Sign-in button and redirect on the web app                |
+| File                                                                  | What to add                                                                                                          |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `packages/types/src/instance/auth.ts`                                 | The provider's config keys in the auth configuration type                                                            |
+| `packages/types/src/instance/base.ts`                                 | The provider's enabled flag                                                                                          |
+| `packages/constants/src/auth/core.ts`                                 | The provider constant                                                                                                |
+| `apps/admin/app/(all)/(dashboard)/authentication/<provider>/page.tsx` | Admin settings page — imports the logo below via `@/app/assets/logos/<provider>-logo.svg?url`                        |
+| `apps/admin/app/(all)/(dashboard)/authentication/<provider>/form.tsx` | Client ID / secret form                                                                                              |
+| `apps/admin/components/authentication/<provider>-config.tsx`          | The provider's row on the authentication list                                                                        |
+| `apps/admin/app/routes.ts`                                            | Route for the settings page                                                                                          |
+| `apps/admin/components/common/header/core.ts`                         | Breadcrumb entry                                                                                                     |
+| `apps/admin/hooks/oauth/core.tsx`                                     | Admin-side OAuth hook — imports the logo below via `@/app/assets/logos/<provider>-logo.svg?url`                      |
+| `apps/web/core/hooks/oauth/core.tsx`                                  | Sign-in button and redirect on the web app — imports the logo below via `@/app/assets/logos/<provider>-logo.svg?url` |
+| `apps/admin/app/assets/logos/<provider>-logo.svg`                     | The provider's logo asset, admin app                                                                                 |
+| `apps/web/app/assets/logos/<provider>-logo.svg`                       | The provider's logo asset, web app — same file, separate directory; both are required                                |
 
 Strings go through `packages/i18n/src/locales` — see the `translate` skill. Do not hardcode user-facing text.
 
@@ -93,3 +95,4 @@ docker compose -f docker-compose-test.yml run --rm api-tests pytest plane/tests/
 - Hardcoding user-facing strings instead of routing them through `packages/i18n`
 - Committing real client secrets — they belong in `.env` only
 - Accepting a sign-in with no email — fail closed, as `yandex.py` and `vk.py` do
+- Forgetting the `<provider>-logo.svg` asset, or adding it to only one app — `apps/admin/app/assets/logos/` and `apps/web/app/assets/logos/` are separate directories and both are imported (`apps/admin/hooks/oauth/core.tsx`, `apps/web/core/hooks/oauth/core.tsx`, `apps/admin/.../authentication/<provider>/page.tsx`); a missing file breaks the build with a failed `?url` import, not a runtime error
