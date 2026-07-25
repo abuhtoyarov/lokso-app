@@ -59,7 +59,16 @@ All four must show `Up`. To run the backend in Docker as well, add `api worker b
 
 ## Run the backend
 
-Natively, when you want hot reload and a debugger — Django does not read `.env` on its own, so it has to be sourced:
+The backend as shipped **cannot reach RabbitMQ when run natively**: `plane-mq` has no `ports:` mapping in `docker-compose-local.yml` (container-internal only, see Layout table), and `apps/api/.env` sets `RABBITMQ_HOST="plane-mq"`, a Docker-internal hostname that does not resolve from the host. A natively-run Celery worker fails to connect immediately, and any Django request path that dispatches a background task fails or hangs. Two options:
+
+**Option A — Docker (recommended when background tasks matter).** Add `api worker beat-worker` to the "Bring up infrastructure" `up` command. Works out of the box, no config changes.
+
+**Option B — Native**, for hot reload and a debugger. Only do this for API work that never touches the broker, or after deliberately fixing the broker access — do not make these changes automatically:
+
+- Add a `ports:` mapping for `plane-mq` in `docker-compose-local.yml` (e.g. `5672:5672`)
+- Set `RABBITMQ_HOST` to `localhost` in `apps/api/.env`
+
+Django does not read `.env` on its own, so it has to be sourced:
 
 ```bash
 cd apps/api
@@ -70,9 +79,9 @@ python manage.py migrate
 python manage.py runserver 8000
 ```
 
-Verify: `curl http://localhost:8000/` returns `{"status": "OK"}`.
+Verify: `curl http://localhost:8000/` returns `{"status": "OK"}`. This only proves Django itself is up — it passes even when RabbitMQ is unreachable, so it does not prove background tasks work.
 
-Background tasks, in another tab with the same venv and the same `source .env`:
+Background tasks, in another tab with the same venv and the same `source .env` (requires Option B's broker fix, or use Option A instead):
 
 ```bash
 celery -A plane worker -l info
@@ -110,3 +119,4 @@ docker compose -f docker-compose-test.yml run --rm api-tests pytest -m unit
 - Assuming `docker compose ps` listing a container means the service is healthy — check the API with `curl` as well
 - Running the API both in Docker and natively — both bind port 8000 and the second one fails
 - Reaching for `docker compose -f docker-compose-local.yml up -d` with no service names when only infrastructure is wanted — that starts the backend containers too
+- Running the backend natively, seeing `curl http://localhost:8000/` return `{"status": "OK"}`, and concluding the environment is fully working — that check passes even when RabbitMQ is unreachable; Celery and any task-dispatching request will still fail
