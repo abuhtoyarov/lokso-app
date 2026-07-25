@@ -38,15 +38,16 @@ find packages -maxdepth 3 -type d -name dist | head
 
 Read the output against this table:
 
-| Symptom                                | Cause                       | Fix                                           |
-| -------------------------------------- | --------------------------- | --------------------------------------------- |
-| Node below 22.18 or pnpm not 11.x      | Wrong toolchain             | `nvm install 22 && npm install -g pnpm@11`    |
-| `docker daemon: DOWN`                  | Docker Desktop not running  | Start Docker Desktop, wait for the whale icon |
-| Fewer than 5 `.env` files              | Env files never generated   | `./setup.sh`                                  |
-| Containers missing from `ps`           | Infrastructure not up       | See "Bring up infrastructure"                 |
-| `curl :8000` returns nothing           | API not running             | See "Run the backend"                         |
-| `curl :3000` returns `000`             | Frontend not running        | See "Run the frontend"                        |
-| No `dist` directories under `packages` | Internal packages not built | `pnpm turbo run build --filter='web^...'`     |
+| Symptom                                                                        | Cause                                                                                                                  | Fix                                                                             |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Node below 22.18 or pnpm not 11.x                                              | Wrong toolchain                                                                                                        | `nvm install 22 && npm install -g pnpm@11`                                      |
+| `docker daemon: DOWN`                                                          | Docker Desktop not running                                                                                             | Start Docker Desktop, wait for the whale icon                                   |
+| Fewer than 5 `.env` files                                                      | Env files never generated                                                                                              | `./setup.sh`                                                                    |
+| Containers missing from `ps`                                                   | Infrastructure not up                                                                                                  | See "Bring up infrastructure"                                                   |
+| `curl :8000` returns nothing                                                   | API not running                                                                                                        | See "Run the backend"                                                           |
+| `api` container `Up` but `curl :8000` never responds, logs stuck on migrations | Started `api` (Option A) without `migrator` on a fresh DB — the entrypoint waits for migrations but never applies them | `docker compose -f docker-compose-local.yml up -d migrator`, then restart `api` |
+| `curl :3000` returns `000`                                                     | Frontend not running                                                                                                   | See "Run the frontend"                                                          |
+| No `dist` directories under `packages`                                         | Internal packages not built                                                                                            | `pnpm turbo run build --filter='web^...'`                                       |
 
 ## Bring up infrastructure
 
@@ -55,13 +56,13 @@ docker compose -f docker-compose-local.yml up -d plane-db plane-redis plane-mq p
 docker compose -f docker-compose-local.yml ps
 ```
 
-All four must show `Up`. To run the backend in Docker as well, add `api worker beat-worker` to the `up` command.
+All four must show `Up`. To run the backend in Docker as well, add `migrator api worker beat-worker` to the `up` command — `migrator` applies migrations once and exits; `api`'s entrypoint only waits for migrations to exist, it never applies them, so omitting `migrator` hangs the API forever on a fresh database.
 
 ## Run the backend
 
 The backend as shipped **does not work natively at all**: `apps/api/.env` points every dependency at a Docker-internal hostname — `POSTGRES_HOST="plane-db"`, `REDIS_HOST="plane-redis"`, `RABBITMQ_HOST="plane-mq"`, `AWS_S3_ENDPOINT_URL="http://plane-minio:9000"` (active, `USE_MINIO=1`) — and none of these hostnames resolve from the host. `python manage.py migrate`, the very first command, fails immediately on DNS resolution of `plane-db`, before RabbitMQ ever enters the picture. `plane-mq` also has no `ports:` mapping in `docker-compose-local.yml` (container-internal only, see Layout table), so even after fixing hostnames, the broker is still unreachable until that's added too. Two options:
 
-**Option A — Docker (recommended when background tasks matter).** Add `api worker beat-worker` to the "Bring up infrastructure" `up` command. Works out of the box, no config changes.
+**Option A — Docker (recommended when background tasks matter).** Add `migrator api worker beat-worker` to the "Bring up infrastructure" `up` command. Works out of the box, no config changes — but `migrator` must be included on a fresh database, or `api` hangs waiting for migrations that never get applied (see Diagnose table).
 
 **Option B — Native**, for hot reload and a debugger. Requires deliberately overriding every dependency's address — do not make these changes automatically:
 
