@@ -1,22 +1,23 @@
 ---
 name: branch-name
-description: Use when starting a new branch or renaming an existing one — produces a branch name in the format `<type>/<work-item-id>-<short-description>` that's compatible with the create-pr skill's work item ID extraction.
+description: Use when starting a new branch or renaming an existing one — produces a branch name in the format `<type>/<issue-number>-<short-description>` that the create-pull-request skill can parse to link the PR to its GitHub issue.
 user_invocable: true
 ---
 
 # Branch Naming
 
-Create branch names that follow the convention `<type>/<work-item-id>-<short-description>`, where the work item ID can be cleanly extracted later (e.g., by the create-pr skill).
+Create branch names following the convention `<type>/<issue-number>-<short-description>`, so the issue number can be extracted later by the `create-pull-request` skill.
 
 ## Format
 
 ```
-<type>/<work-item-id>-<short-description>
+<type>/<issue-number>-<short-description>
 ```
 
 - All lowercase, hyphen-separated
-- Work item ID stays in its original form but lowercased (e.g., `SILO-1146` → `silo-1146`)
+- Issue number is the plain GitHub issue number, no `#` prefix
 - Short description is 2–5 words in kebab-case, focused on the _what_, not the _how_
+- Branches are always cut from `main`
 
 ## Workflow
 
@@ -28,20 +29,23 @@ Create branch names that follow the convention `<type>/<work-item-id>-<short-des
    - `docs` — documentation only
    - `perf` — performance improvement
 
-2. **Determine the work item ID**:
+2. **Determine the issue number**:
    - If the user gives one, use it
-   - If they reference a Plane work item (e.g., a URL or title), extract the ID
-   - If none exists, ask the user — don't invent one
+   - If they reference a GitHub issue by URL or title, extract the number:
+     `gh issue list --search "<title>" --json number,title`
+   - If no issue exists yet, offer to create one — don't invent a number:
+     `gh issue create --title "<title>" --body "<description>"`
 
 3. **Write the short description**:
    - 2–5 words in kebab-case
-   - Describe the outcome, not the implementation (`add-app-tile-visibility`, not `update-tile-component`)
+   - Describe the outcome, not the implementation (`add-telegram-notifications`, not `update-bot-service`)
    - Skip filler words (`the`, `a`, `for`)
 
-4. **Assemble and create the branch**:
+4. **Assemble and create the branch** from an up-to-date `main`:
 
-```
-   git checkout -b <type>/<work-item-id-lowercased>-<short-description>
+```bash
+git checkout main && git pull
+git checkout -b <type>/<issue-number>-<short-description>
 ```
 
 5. **Return the branch name** to the user.
@@ -49,19 +53,20 @@ Create branch names that follow the convention `<type>/<work-item-id>-<short-des
 ## Examples
 
 ```
-fix/silo-1146-relative-config-urls
-feat/web-1234-app-tile-visibility
-chore/web-2201-bump-eslint
-refactor/silo-980-extract-auth-middleware
-docs/web-1500-pr-template-update
-perf/silo-1310-cache-workspace-lookup
+feat/42-telegram-notifications
+fix/57-yandex-oauth-missing-email
+chore/61-bump-pnpm-version
+refactor/70-extract-llm-client-factory
+docs/73-local-dev-guide
+perf/78-cache-workspace-lookup
 ```
 
 ## Common Mistakes
 
-- Putting the work item ID at the end instead of after the type (breaks extraction)
+- Putting the issue number at the end instead of after the type — breaks extraction
+- Including the `#` prefix — it has no place in a branch name
 - Using underscores or camelCase instead of hyphens
-- Uppercasing the work item ID inside the branch name (it should be lowercase here, uppercased only when used as the PR title prefix)
+- Branching off anything other than `main` — it's the only long-lived branch
+- Inventing an issue number when no issue exists — create the issue instead
 - Writing a long, narrative description — keep it scannable
-- Omitting the work item ID when one exists in Plane
-- Using a type that won't match the eventual PR type (pick the type you'd use in the PR title)
+- Using a type that won't match the eventual PR type — pick the type you'd use in the PR title
