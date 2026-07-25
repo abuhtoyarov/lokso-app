@@ -98,7 +98,7 @@ A 1–3 sentence paragraph describing what the user gets, why it matters, and an
 
 Rules:
 
-- Section headers use `###`, then emoji + **two spaces** + label. Exception: 🛡️ Security uses a single space.
+- Section headers use `###`, then emoji + a single space + label.
 - Features use `####` with the name bolded: `#### **Feature Name**`. Each gets a real paragraph, not a bullet.
 - Enhancements, Bug fixes and Security are simple bullets — no commit prefixes, no PR numbers, no issue numbers.
 - Do not add a `# Release vX.Y.Z` heading — the tag carries the version.
@@ -111,8 +111,13 @@ Rules:
 Bump the version in `package.json` and `apps/web/package.json`, commit, tag, then create the release:
 
 ```bash
+# 1. Bump the version in package.json and apps/web/package.json to X.Y.Z
+git add package.json apps/web/package.json
+git commit -m "chore: bump version to X.Y.Z"
+
+# 2. Tag and publish
 git tag -a vX.Y.Z -m "vX.Y.Z"
-git push origin vX.Y.Z
+git push origin main vX.Y.Z
 gh release create vX.Y.Z --title "vX.Y.Z" --notes "$(cat <<'EOF'
 <release notes markdown>
 EOF
