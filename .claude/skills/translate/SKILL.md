@@ -209,7 +209,7 @@ Punctuation: Western punctuation (`. , ? !`); straight quotes `"…"` and `'…'
 ✅ "使用 GitHub 登录"           (Latin brand → half-width spaces around)
 ✅ "创建周期"                    (zh-CN feature noun translated; no Latin = no spaces)
 ✅ "归档此史诗"                  (Lokso Epic → 史诗 per glossary)
-✅ "添加 Sticky"                (Sticky is a brand mark → Latin + half-width space)
+✅ "添加便签"                    (Lokso Stickies → 便签 per glossary)
 ✅ "升级到 Pro"                 (Pro is a plan tier → Latin)
 ✅ "登录 GitHub。"               (no space between Latin token and full-width period)
 ❌ "使用GitHub登录"               (Latin brand without surrounding half-width space)
