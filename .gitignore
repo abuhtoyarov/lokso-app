@@ -118,3 +118,6 @@ packages/i18n/src/types/keys.generated.ts
 
 # Локальные разрешения Claude Code — у каждого свои
 .claude/settings.local.json
+
+# Внутренние рабочие документы (планы, оценки) — не для публичного репозитория
+docs-lokso/
