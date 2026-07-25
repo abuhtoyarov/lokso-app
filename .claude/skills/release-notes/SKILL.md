@@ -108,16 +108,25 @@ Rules:
 
 ### 6. Publish
 
-Bump the version in `package.json` and `apps/web/package.json`, commit, tag, then create the release:
+The version bump goes through a PR like any other change to `main` — no direct commits to `main` (see `CONTRIBUTING.md`). Tag only after that PR has merged.
 
 ```bash
-# 1. Bump the version in package.json and apps/web/package.json to X.Y.Z
+# 1. Bump the version in package.json and apps/web/package.json to X.Y.Z, on a branch
+git checkout -b chore/release-vX.Y.Z
 git add package.json apps/web/package.json
 git commit -m "chore: bump version to X.Y.Z"
+git push -u origin chore/release-vX.Y.Z
+gh pr create --title "chore: bump version to X.Y.Z" --body "Version bump for the vX.Y.Z release."
+```
 
-# 2. Tag and publish
+Once that PR is reviewed and merged:
+
+```bash
+# 2. Tag the merged commit on main and publish
+git checkout main
+git pull origin main
 git tag -a vX.Y.Z -m "vX.Y.Z"
-git push origin main vX.Y.Z
+git push origin vX.Y.Z
 gh release create vX.Y.Z --title "vX.Y.Z" --notes "$(cat <<'EOF'
 <release notes markdown>
 EOF
@@ -132,6 +141,7 @@ Always use a HEREDOC with single-quoted `'EOF'` so backticks and dollar signs su
 - Adding a `# Release vX.Y.Z` heading — the tag is the version
 - Copy-pasting commit subjects verbatim instead of rewriting them into plain product language
 - Bulleting features instead of giving each a `#### **Name**` and a paragraph
-- Tagging before bumping the version in `package.json`
+- Committing the version bump straight to `main` instead of opening a PR
+- Tagging before the version-bump PR has merged into `main`
 - Using `--notes` without a HEREDOC, so shell metacharacters corrupt the notes
 - Writing the notes in English — the audience is Russian-speaking

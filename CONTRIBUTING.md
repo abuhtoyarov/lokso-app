@@ -33,7 +33,7 @@ pnpm --filter web dev
 
 ## Ветки и коммиты
 
-Базовая ветка — `main`.
+Базовая ветка — `main`. Изменения попадают в неё только через pull request из feature-ветки — прямые коммиты в `main` не делаем.
 
 Имя ветки: `<тип>/<номер-issue>-<краткое-описание>`, например
 `feat/42-telegram-bot`. Типы: `feat`, `fix`, `chore`, `refactor`, `docs`, `perf`.
