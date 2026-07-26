@@ -137,3 +137,4 @@ from .draft import (
 )
 
 from .worklog import WorklogSerializer, WorklogJournalSerializer
+from .worklog_export import WorklogExportSerializer

@@ -36,6 +36,7 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorklogExportEndpoint,
     WorkspaceWorklogEndpoint,
     WorkspaceWorklogSummaryEndpoint,
 )
@@ -269,5 +270,10 @@ urlpatterns = [
         "workspaces/<str:slug>/worklogs/summary/",
         WorkspaceWorklogSummaryEndpoint.as_view(),
         name="workspace-worklogs-summary",
+    ),
+    path(
+        "workspaces/<str:slug>/worklogs/exports/",
+        WorklogExportEndpoint.as_view(),
+        name="workspace-worklog-exports",
     ),
 ]

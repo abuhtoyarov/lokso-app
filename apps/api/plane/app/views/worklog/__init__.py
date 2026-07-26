@@ -2,4 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from .base import WorklogViewSet, WorkspaceWorklogEndpoint, WorkspaceWorklogSummaryEndpoint
+from .base import (
+    WorklogExportEndpoint,
+    WorklogViewSet,
+    WorkspaceWorklogEndpoint,
+    WorkspaceWorklogSummaryEndpoint,
+)

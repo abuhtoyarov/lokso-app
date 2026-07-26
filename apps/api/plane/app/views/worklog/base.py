@@ -17,9 +17,10 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE, WorklogPermission
-from plane.app.serializers import WorklogJournalSerializer, WorklogSerializer
+from plane.app.serializers import ExporterHistorySerializer, WorklogJournalSerializer, WorklogSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Worklog
+from plane.bgtasks.worklog_export_task import worklog_export_task
+from plane.db.models import ExporterHistory, Worklog, Workspace
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -230,4 +231,57 @@ class WorkspaceWorklogSummaryEndpoint(WorkspaceWorklogEndpoint):
                 "entry_count": aggregate["entry_count"] or 0,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class WorklogExportEndpoint(BaseAPIView):
+    serializer_class = ExporterHistorySerializer
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def post(self, request, slug):
+        provider = request.data.get("provider", False)
+        if provider not in ["csv", "xlsx", "json"]:
+            return Response(
+                {"error": f"Provider '{provider}' not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        workspace = Workspace.objects.get(slug=slug)
+        filters = {
+            key: request.data.get(key)
+            for key in ("users", "projects", "start_date", "end_date")
+            if request.data.get(key)
+        }
+
+        exporter = ExporterHistory.objects.create(
+            workspace=workspace,
+            initiated_by=request.user,
+            provider=provider,
+            type="issue_worklogs",
+            filters=filters,
+        )
+
+        worklog_export_task.delay(
+            provider=exporter.provider,
+            workspace_id=workspace.id,
+            token_id=exporter.token,
+            slug=slug,
+            filters=filters,
+        )
+        return Response(
+            {"message": "Once the export is ready you will be able to download it"},
+            status=status.HTTP_200_OK,
+        )
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def get(self, request, slug):
+        exporter_history = ExporterHistory.objects.filter(
+            workspace__slug=slug, type="issue_worklogs"
+        ).select_related("workspace", "initiated_by")
+
+        return self.paginate(
+            order_by=request.GET.get("order_by", "-created_at"),
+            request=request,
+            queryset=exporter_history,
+            on_results=lambda rows: ExporterHistorySerializer(rows, many=True).data,
         )
