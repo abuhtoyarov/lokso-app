@@ -48,7 +48,7 @@ After installation, you can verify the installation by opening a terminal (Comma
 
 ## Installing Lokso
 
-Installing plane is a very easy and minimal step process.
+Installing Lokso is a very easy and minimal step process.
 
 ### Prerequisite
 
@@ -85,7 +85,7 @@ chmod +x setup.sh
 
 ### Proceed with setup
 
-Above steps will set you ready to install and start plane services.
+Above steps will set you ready to install and start Lokso services.
 
 Lets get started by running the `./setup.sh` command.
 
@@ -506,14 +506,9 @@ When you want to restore the previously backed-up data, follow the instructions 
 
    ```bash
    --------------------------------------------
-    ____  _                          /////////
-   |  _ \| | __ _ _ __   ___         /////////
-   | |_) | |/ _` | '_ \ / _ \   /////    /////
-   |  __/| | (_| | | | |  __/   /////    /////
-   |_|   |_|\__,_|_| |_|\___|        ////
-                                    ////
+                      LOKSO
    --------------------------------------------
-   Project management tool from the future
+   Task tracker for your team
    --------------------------------------------
    Found /opt/plane-selfhost/plane-app/backup/20240722-0914/pgdata.tar.gz
    .....Restoring plane-app_pgdata
@@ -537,14 +532,13 @@ When you want to restore the previously backed-up data, follow the instructions 
 
 ### Restore for Commercial Air-Gapped (Docker Compose)
 
-> **Not applicable to Lokso.** This section documents the upstream Plane project's separate commercial "Air-Gapped" edition. Lokso ships only the community edition and has no commercial or air-gapped tier, so this procedure does not apply to any Lokso deployment. Kept below for reference only.
+> **Not applicable to Lokso.** This section documents the upstream Plane project's separate commercial "Air-Gapped" edition. Lokso ships only the community edition and has no commercial or air-gapped tier, so this procedure does not apply to any Lokso deployment. Kept below for reference only. Since this edition does not exist for Lokso, no Lokso release ever carries a `restore-airgapped.sh` asset — do not attempt the download command below against `abuhtoyarov/lokso-app`; it will 404.
 
 When you want to restore the previously backed-up data on Plane Commercial Air-Gapped version, follow the instructions below.
 
-1. Download the restore script using the command below
+1. Obtain the `restore-airgapped.sh` script from your Plane Commercial Air-Gapped distribution (this repository does not publish it):
 
    ```bash
-   curl -fsSL -o restore-airgapped.sh https://github.com/abuhtoyarov/lokso-app/releases/latest/download/restore-airgapped.sh
    chmod +x restore-airgapped.sh
    ```
 
@@ -573,7 +567,7 @@ As there has been significant changes to Self Hosting process, this step mainly 
 
 > Before we begin with migration, make sure your v0.14.0 was started and then stopped. This is required to know the newly created docker volume names.
 
-Use the migration script that ships with this repository:
+Use the migration script that ships with this repository. This requires a full clone of the `lokso-app` repository — the `setup.sh` you downloaded earlier does not include it:
 
 ```
 
