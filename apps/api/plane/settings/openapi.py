@@ -45,7 +45,6 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "SERVERS": [
         {"url": "http://localhost:8000", "description": "Local"},
-        {"url": "https://api.plane.so", "description": "Production"},
     ],
     # ========================================================================
     # API Tag Definitions
