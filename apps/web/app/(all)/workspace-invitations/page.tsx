@@ -111,7 +111,7 @@ function WorkspaceInvitationPage() {
               ) : (
                 <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
               )}
-              <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/makeplane" />
+              <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/abuhtoyarov/lokso-app" />
               <EmptySpaceItem
                 Icon={Share2}
                 title="Join our community of active creators"
