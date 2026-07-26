@@ -11,8 +11,8 @@ import { useSearchParams } from "next/navigation";
 // plane imports
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Row, Avatar } from "@plane/ui";
-import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+import { Row } from "@plane/ui";
+import { cn, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -126,11 +126,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               )}
             </div>
             {/* created by */}
-            {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar src={getFileURL("")} name={"Локсо"} size="md" showTooltip />
-            ) : createdByDetails ? (
-              <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
-            ) : null}
+            {createdByDetails ? <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} /> : null}
           </div>
         </Row>
       </Link>
