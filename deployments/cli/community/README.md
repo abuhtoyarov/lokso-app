@@ -46,7 +46,7 @@ After installation, you can verify the installation by opening a terminal (Comma
 
 ---
 
-## Installing Plane
+## Installing Lokso
 
 Installing plane is a very easy and minimal step process.
 
@@ -184,7 +184,7 @@ Be patient as it might take sometime based on download speed and system configur
 
 This is the confirmation that all images were downloaded and the services are up & running.
 
-You have successfully self hosted `Plane` instance. Access the application by going to IP or domain you have configured it (e.g `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
+You have successfully self hosted `Lokso` instance. Access the application by going to IP or domain you have configured it (e.g `https://plane.example.com:8080` or `http://[IP-ADDRESS]:8080`)
 
 ---
 
@@ -279,9 +279,9 @@ If all goes well, you will see the confirmation from docker cli
 
 ---
 
-### Upgrading Plane Version
+### Upgrading Lokso Version
 
-It is always advised to keep Plane up to date with the latest release.
+It is always advised to keep Lokso up to date with the latest release.
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `5` to upgrade the release.
 
@@ -487,7 +487,7 @@ Backup completed successfully. Backup files are stored in /....../plane-app/back
 
 When you want to restore the previously backed-up data, follow the instructions below.
 
-1. Make sure that Plane-CE is installed, started, and then stopped. This ensures that the Docker volumes are created.
+1. Make sure that Lokso is installed, started, and then stopped. This ensures that the Docker volumes are created.
 
 1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
@@ -531,11 +531,13 @@ When you want to restore the previously backed-up data, follow the instructions 
    Restore completed successfully.
    ```
 
-1. Start the Plane instance using `./setup.sh start`.
+1. Start the Lokso instance using `./setup.sh start`.
 
 ---
 
 ### Restore for Commercial Air-Gapped (Docker Compose)
+
+> **Not applicable to Lokso.** This section documents the upstream Plane project's separate commercial "Air-Gapped" edition. Lokso ships only the community edition and has no commercial or air-gapped tier, so this procedure does not apply to any Lokso deployment. Kept below for reference only.
 
 When you want to restore the previously backed-up data on Plane Commercial Air-Gapped version, follow the instructions below.
 

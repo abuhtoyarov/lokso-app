@@ -1,14 +1,14 @@
-# Plane Community All-In-One (AIO) Docker Image
+# Lokso Community All-In-One (AIO) Docker Image
 
 > **Not available yet.** Lokso has not published any images or cut any releases yet, and there is no CI workflow that builds or pushes them. The instructions below are correct but not yet usable — they apply starting from Lokso's first release.
 
-The Plane Community All-In-One Docker image packages all Plane services into a single container for easy deployment and testing. This image includes web interface, API server, background workers, live server, and more.
+The Lokso Community All-In-One Docker image packages all Lokso services into a single container for easy deployment and testing. This image includes web interface, API server, background workers, live server, and more.
 
 ## What's Included
 
 The AIO image contains the following services:
 
-- **Web App** (Port 3001): Main Plane web interface
+- **Web App** (Port 3001): Main Lokso web interface
 - **Space** (Port 3002): Public project spaces
 - **Admin** (Port 3003): Administrative interface
 - **API Server** (Port 3004): Backend API
@@ -131,7 +131,7 @@ IMAGE_NAME=my-registry/my-lokso-aio ./build.sh --release=v0.27.1 [--platform=lin
 
 Available build options:
 
-- `--release`: Plane version to build (required)
+- `--release`: Lokso version to build (required)
 - `--image-name`: Custom image name (default: `ghcr.io/abuhtoyarov/lokso-aio-community`)
 
 ## Troubleshooting
@@ -172,4 +172,4 @@ The container will validate required environment variables on startup and displa
 
 ## Support
 
-For issues and support, please refer to the official Plane documentation.
+For issues and support, please refer to the [Lokso documentation](https://lokso.ru/docs).
