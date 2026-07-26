@@ -87,6 +87,17 @@ def test_zero_duration_rejected(session_client, workspace, project, issue):
 
 
 @pytest.mark.contract
+def test_negative_duration_rejected(session_client, workspace, project, issue):
+    response = session_client.post(
+        _list_url(workspace, project, issue),
+        data={"duration": -30, "logged_at": "2026-07-20"},
+        format="json",
+    )
+    assert response.status_code == 400
+    assert Worklog.objects.count() == 0
+
+
+@pytest.mark.contract
 def test_api_closed_when_feature_disabled(session_client, workspace, project, issue):
     project.is_time_tracking_enabled = False
     project.save()
