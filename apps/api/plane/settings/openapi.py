@@ -12,16 +12,16 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     # Basic API Information
     # ========================================================================
-    "TITLE": "The Plane REST API",
+    "TITLE": "The Lokso REST API",
     "DESCRIPTION": (
-        "The Plane REST API\n\n"
+        "The Lokso REST API\n\n"
         "Visit our quick start guide and full API documentation at "
-        "[developers.plane.so](https://developers.plane.so/api-reference/introduction)."
+        "[lokso.ru/docs](https://lokso.ru/docs)."
     ),
     "CONTACT": {
-        "name": "Plane",
-        "url": "https://plane.so",
-        "email": "support@plane.so",
+        "name": "Lokso",
+        "url": "https://lokso.ru",
+        "email": "support@lokso.ru",
     },
     "VERSION": "0.0.1",
     "LICENSE": {
