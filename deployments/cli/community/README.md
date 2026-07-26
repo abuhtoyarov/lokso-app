@@ -1,5 +1,7 @@
 # Self Hosting
 
+> **Not available yet.** Lokso has not published any images or cut any releases yet, and there is no CI workflow that builds or pushes them. The instructions below are correct but not yet usable — they apply starting from Lokso's first release.
+
 In this guide, we will walk you through the process of setting up a self-hosted environment. Self-hosting allows you to have full control over your applications and data. It's a great way to ensure privacy, control, and customization.
 
 We will cover two main options for setting up your self-hosted environment: using a cloud server or using your desktop. For the cloud server, we will use an AWS EC2 instance. For the desktop, we will use Docker to create a local environment.
@@ -63,18 +65,18 @@ mkdir plane-selfhost
 cd plane-selfhost
 ```
 
-#### For *Docker Compose* based setup
+#### For _Docker Compose_ based setup
 
 ```
-curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/setup.sh
+curl -fsSL -o setup.sh https://github.com/abuhtoyarov/lokso-app/releases/latest/download/setup.sh
 
 chmod +x setup.sh
 ```
 
-#### For *Docker Swarm* based setup
+#### For _Docker Swarm_ based setup
 
 ```
-curl -fsSL -o setup.sh https://github.com/makeplane/plane/releases/latest/download/swarm.sh
+curl -fsSL -o setup.sh https://github.com/abuhtoyarov/lokso-app/releases/latest/download/swarm.sh
 
 chmod +x setup.sh
 ```
@@ -89,7 +91,8 @@ Lets get started by running the `./setup.sh` command.
 
 This will prompt you with the below options.
 
-#### Docker Compose 
+#### Docker Compose
+
 ```bash
 Select an Action you want to perform:
    1) Install (x86_64)
@@ -189,7 +192,7 @@ You have successfully self hosted `Plane` instance. Access the application by go
 
 In case you want to make changes to `plane.env` variables, we suggest you to stop the services before doing that.
 
-#### Docker Compose 
+#### Docker Compose
 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the services
 
@@ -239,6 +242,7 @@ In case you want to make changes to `plane.env` variables, without stopping the 
 Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the services
 
 #### Docker Compose
+
 ```bash
 Select a Action you want to perform:
    1) Install (x86_64)
@@ -275,7 +279,7 @@ If all goes well, you will see the confirmation from docker cli
 
 ---
 
-### Upgrading Plane Version 
+### Upgrading Plane Version
 
 It is always advised to keep Plane up to date with the latest release.
 
@@ -337,9 +341,9 @@ Once done with making changes in `plane.env` file, jump on to `Redeploy Stack`
 
 ### View Logs
 
-There would a time when you might want to check what is happening inside the API, Worker or any other container.  
+There would a time when you might want to check what is happening inside the API, Worker or any other container.
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. 
+Lets again run the `./setup.sh` command. You will again be prompted with the below options.
 
 This time select `6` to view logs.
 
@@ -361,7 +365,6 @@ Action [2]: 6
 
 #### Docker Swarm
 
-
 ```bash
    1) Deploy Stack
    2) Remove Stack
@@ -375,7 +378,9 @@ Action [3]: 6
 ```
 
 #### Service Menu Options for Logs
+
 This will further open sub-menu with list of services
+
 ```bash
 Select a Service you want to view the logs for:
    1) Web
@@ -395,6 +400,7 @@ Service: 3
 ```
 
 Select any of the service to view the logs e.g. `3`. Expect something similar to this
+
 ```bash
 api-1  | Waiting for database...
 api-1  | Database available!
@@ -439,9 +445,9 @@ api-1  | [2024-05-02 03:56:03 +0000] [25] [INFO] Application startup complete.
 
 ```
 
-To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions. 
+To exit this, use `CTRL+C` and then you will land on to the main-menu with the list of actions.
 
-Similarly, you can view the logs of other services. 
+Similarly, you can view the logs of other services.
 
 ---
 
@@ -486,7 +492,7 @@ When you want to restore the previously backed-up data, follow the instructions 
 1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
    ```bash
-   curl -fsSL -o restore.sh https://github.com/makeplane/plane/releases/latest/download/restore.sh
+   curl -fsSL -o restore.sh https://github.com/abuhtoyarov/lokso-app/releases/latest/download/restore.sh
    chmod +x restore.sh
    ```
 
@@ -500,12 +506,12 @@ When you want to restore the previously backed-up data, follow the instructions 
 
    ```bash
    --------------------------------------------
-    ____  _                          ///////// 
-   |  _ \| | __ _ _ __   ___         ///////// 
-   | |_) | |/ _` | '_ \ / _ \   /////    ///// 
-   |  __/| | (_| | | | |  __/   /////    ///// 
-   |_|   |_|\__,_|_| |_|\___|        ////      
-                                    ////      
+    ____  _                          /////////
+   |  _ \| | __ _ _ __   ___         /////////
+   | |_) | |/ _` | '_ \ / _ \   /////    /////
+   |  __/| | (_| | | | |  __/   /////    /////
+   |_|   |_|\__,_|_| |_|\___|        ////
+                                    ////
    --------------------------------------------
    Project management tool from the future
    --------------------------------------------
@@ -536,7 +542,7 @@ When you want to restore the previously backed-up data on Plane Commercial Air-G
 1. Download the restore script using the command below
 
    ```bash
-   curl -fsSL -o restore-airgapped.sh https://github.com/makeplane/plane/releases/latest/download/restore-airgapped.sh
+   curl -fsSL -o restore-airgapped.sh https://github.com/abuhtoyarov/lokso-app/releases/latest/download/restore-airgapped.sh
    chmod +x restore-airgapped.sh
    ```
 
@@ -550,12 +556,14 @@ When you want to restore the previously backed-up data on Plane Commercial Air-G
    ./restore-airgapped.sh <path to backup folder containing *.tar.gz files>
    ```
 
-1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data. 
+1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data.
 
 ---
 
 <details>
    <summary><h2>Upgrading from v0.13.2 to v0.14.x</h2></summary>
+
+> **Not applicable to Lokso.** This procedure is inherited from the upstream Plane project and covers a one-time migration between two Plane releases (v0.13.2 and v0.14.0) that predate Lokso's fork — Lokso never shipped either version, so no Lokso deployment needs it. It is kept below only for historical reference; the script it describes ships in this repo at `deployments/cli/community/migration-0.13-0.14.sh` and is not fetched from an external URL.
 
 This is one time activity for users who are upgrading from v0.13.2 to v0.14.0
 
@@ -563,11 +571,11 @@ As there has been significant changes to Self Hosting process, this step mainly 
 
 > Before we begin with migration, make sure your v0.14.0 was started and then stopped. This is required to know the newly created docker volume names.
 
-Begin with downloading the migration script using below command
+Use the migration script that ships with this repository:
 
 ```
 
-curl -fsSL -o migrate.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/migration-0.13-0.14.sh
+cp deployments/cli/community/migration-0.13-0.14.sh migrate.sh
 
 chmod +x migrate.sh
 
@@ -627,4 +635,5 @@ In case the suffixes are wrong or the mentioned volumes are not found, you will 
 In case of successful migration, it will be a silent exit without error.
 
 Now its time to restart v0.14.0 setup.
+
 </details>
