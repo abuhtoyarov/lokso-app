@@ -1,5 +1,7 @@
 # Plane Community All-In-One (AIO) Docker Image
 
+> **Not available yet.** Lokso has not published any images or cut any releases yet, and there is no CI workflow that builds or pushes them. The instructions below are correct but not yet usable — they apply starting from Lokso's first release.
+
 The Plane Community All-In-One Docker image packages all Plane services into a single container for easy deployment and testing. This image includes web interface, API server, background workers, live server, and more.
 
 ## What's Included
@@ -8,7 +10,7 @@ The AIO image contains the following services:
 
 - **Web App** (Port 3001): Main Plane web interface
 - **Space** (Port 3002): Public project spaces
-- **Admin** (Port 3003): Administrative interface  
+- **Admin** (Port 3003): Administrative interface
 - **API Server** (Port 3004): Backend API
 - **Live Server** (Port 3005): Real-time collaboration
 - **Proxy** (Port 80, 443): Caddy reverse proxy
@@ -21,7 +23,7 @@ The AIO image contains the following services:
 The AIO image requires these external services to be running:
 
 - **PostgreSQL Database**: For data storage
-- **Redis**: For caching and session management  
+- **Redis**: For caching and session management
 - **RabbitMQ**: For message queuing
 - **S3-Compatible Storage**: For file uploads (AWS S3 or MinIO)
 
@@ -33,7 +35,7 @@ You must provide these environment variables:
 
 - `DOMAIN_NAME`: Your domain name or IP address
 - `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string  
+- `REDIS_URL`: Redis connection string
 - `AMQP_URL`: RabbitMQ connection string
 
 #### Storage Configuration
@@ -49,7 +51,7 @@ You must provide these environment variables:
 ### Basic Usage
 
 ```bash
-docker run --name plane-aio --rm -it \
+docker run --name lokso-aio --rm -it \
     -p 80:80 \
     -e DOMAIN_NAME=your-domain.com \
     -e DATABASE_URL=postgresql://user:pass@host:port/database \
@@ -59,7 +61,7 @@ docker run --name plane-aio --rm -it \
     -e AWS_ACCESS_KEY_ID=your-access-key \
     -e AWS_SECRET_ACCESS_KEY=your-secret-key \
     -e AWS_S3_BUCKET_NAME=your-bucket \
-    makeplane/plane-aio-community:latest
+    ghcr.io/abuhtoyarov/lokso-aio-community:latest
 ```
 
 ### Example with IP Address
@@ -78,7 +80,7 @@ docker run --name myaio --rm -it \
     -e AWS_S3_BUCKET_NAME=plane-app \
     -e AWS_S3_ENDPOINT_URL=http://${MYIP}:19000 \
     -e FILE_SIZE_LIMIT=10485760 \
-    makeplane/plane-aio-community:latest
+    ghcr.io/abuhtoyarov/lokso-aio-community:latest
 ```
 
 ## Configuration Options
@@ -88,7 +90,6 @@ docker run --name myaio --rm -it \
 #### Network & Protocol
 
 - `SITE_ADDRESS`: Server bind address (default: `:80`)
-
 
 #### Security & Secrets
 
@@ -116,7 +117,7 @@ The following ports are exposed:
 
 ```bash
 -v /path/to/logs:/app/logs \
--v /path/to/data:/app/data 
+-v /path/to/data:/app/data
 ```
 
 ## Building the Image
@@ -125,13 +126,13 @@ To build the AIO image yourself:
 
 ```bash
 cd deployments/aio/community
-IMAGE_NAME=myplane-aio ./build.sh --release=v0.27.1 [--platform=linux/amd64]
+IMAGE_NAME=my-registry/my-lokso-aio ./build.sh --release=v0.27.1 [--platform=linux/amd64]
 ```
 
 Available build options:
 
 - `--release`: Plane version to build (required)
-- `--image-name`: Custom image name (default: `plane-aio-community`)
+- `--image-name`: Custom image name (default: `ghcr.io/abuhtoyarov/lokso-aio-community`)
 
 ## Troubleshooting
 
@@ -153,7 +154,7 @@ docker exec -it <container-name> supervisorctl status
 ### Common Issues
 
 1. **Database Connection Failed**: Ensure PostgreSQL is accessible and credentials are correct
-2. **Redis Connection Failed**: Verify Redis server is running and URL is correct  
+2. **Redis Connection Failed**: Verify Redis server is running and URL is correct
 3. **File Upload Issues**: Check S3 credentials and bucket permissions
 
 ### Environment Validation

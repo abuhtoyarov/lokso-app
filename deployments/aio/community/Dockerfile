@@ -6,12 +6,12 @@ FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 # **************************************************
 FROM node:22-alpine AS node
 
-FROM makeplane/plane-frontend:${PLANE_VERSION} AS web-img
-FROM makeplane/plane-backend:${PLANE_VERSION} AS backend-img
-FROM makeplane/plane-space:${PLANE_VERSION} AS space-img
-FROM makeplane/plane-admin:${PLANE_VERSION} AS admin-img
-FROM makeplane/plane-live:${PLANE_VERSION} AS live-img
-FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
+FROM ghcr.io/abuhtoyarov/lokso-frontend:${PLANE_VERSION} AS web-img
+FROM ghcr.io/abuhtoyarov/lokso-backend:${PLANE_VERSION} AS backend-img
+FROM ghcr.io/abuhtoyarov/lokso-space:${PLANE_VERSION} AS space-img
+FROM ghcr.io/abuhtoyarov/lokso-admin:${PLANE_VERSION} AS admin-img
+FROM ghcr.io/abuhtoyarov/lokso-live:${PLANE_VERSION} AS live-img
+FROM ghcr.io/abuhtoyarov/lokso-proxy:${PLANE_VERSION} AS proxy-img
 
 # **************************************************
 #  STAGE 1: Runner
