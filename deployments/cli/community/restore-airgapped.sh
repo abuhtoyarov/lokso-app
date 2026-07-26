@@ -1,19 +1,14 @@
 #!/bin/bash
-+set -euo pipefail
+set -euo pipefail
 
 function print_header() {
 clear
 
 cat <<"EOF"
 --------------------------------------------
- ____  _                          ///////// 
-|  _ \| | __ _ _ __   ___         ///////// 
-| |_) | |/ _` | '_ \ / _ \   /////    ///// 
-|  __/| | (_| | | | |  __/   /////    ///// 
-|_|   |_|\__,_|_| |_|\___|        ////      
-                                  ////      
+                   LOKSO
 --------------------------------------------
-Project management tool from the future
+Task tracker for your team
 --------------------------------------------
 EOF
 }
