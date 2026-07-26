@@ -83,6 +83,89 @@ def test_updating_worklog_records_old_and_new(session_client, workspace, project
 
 
 @pytest.mark.contract
+def test_updating_only_logged_at_records_activity(session_client, workspace, project, issue):
+    created = session_client.post(
+        _list_url(workspace, project, issue),
+        data={"duration": 60, "logged_at": "2026-07-20"},
+        format="json",
+    ).json()
+
+    session_client.patch(
+        f"{_list_url(workspace, project, issue)}{created['id']}/",
+        data={"logged_at": "2026-07-22"},
+        format="json",
+    )
+
+    activity = IssueActivity.objects.get(issue=issue, field="worklog_logged_at", verb="updated")
+    assert activity.old_value == "2026-07-20"
+    assert activity.new_value == "2026-07-22"
+    assert str(activity.new_identifier) == created["id"]
+
+
+@pytest.mark.contract
+def test_updating_only_description_records_activity(session_client, workspace, project, issue):
+    created = session_client.post(
+        _list_url(workspace, project, issue),
+        data={"duration": 60, "logged_at": "2026-07-20", "description": "initial note"},
+        format="json",
+    ).json()
+
+    session_client.patch(
+        f"{_list_url(workspace, project, issue)}{created['id']}/",
+        data={"description": "revised note"},
+        format="json",
+    )
+
+    activity = IssueActivity.objects.get(issue=issue, field="worklog_description", verb="updated")
+    assert activity.old_value == "initial note"
+    assert activity.new_value == "revised note"
+    assert str(activity.new_identifier) == created["id"]
+
+
+@pytest.mark.contract
+def test_updating_duration_and_logged_at_together_records_both(session_client, workspace, project, issue):
+    created = session_client.post(
+        _list_url(workspace, project, issue),
+        data={"duration": 60, "logged_at": "2026-07-20"},
+        format="json",
+    ).json()
+
+    session_client.patch(
+        f"{_list_url(workspace, project, issue)}{created['id']}/",
+        data={"duration": 90, "logged_at": "2026-07-22"},
+        format="json",
+    )
+
+    duration_activity = IssueActivity.objects.get(issue=issue, field="worklog", verb="updated")
+    assert duration_activity.old_value == "60"
+    assert duration_activity.new_value == "90"
+
+    date_activity = IssueActivity.objects.get(issue=issue, field="worklog_logged_at", verb="updated")
+    assert date_activity.old_value == "2026-07-20"
+    assert date_activity.new_value == "2026-07-22"
+
+
+@pytest.mark.contract
+def test_updating_worklog_with_no_changes_records_no_activity(session_client, workspace, project, issue):
+    created = session_client.post(
+        _list_url(workspace, project, issue),
+        data={"duration": 60, "logged_at": "2026-07-20", "description": "same note"},
+        format="json",
+    ).json()
+
+    before_count = IssueActivity.objects.filter(issue=issue, verb="updated").count()
+
+    session_client.patch(
+        f"{_list_url(workspace, project, issue)}{created['id']}/",
+        data={"duration": 60, "logged_at": "2026-07-20", "description": "same note"},
+        format="json",
+    )
+
+    after_count = IssueActivity.objects.filter(issue=issue, verb="updated").count()
+    assert after_count == before_count
+
+
+@pytest.mark.contract
 def test_deleting_worklog_keeps_its_activity(session_client, workspace, project, issue):
     created = session_client.post(
         _list_url(workspace, project, issue),
