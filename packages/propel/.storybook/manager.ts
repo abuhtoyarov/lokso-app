@@ -11,7 +11,6 @@ const planeTheme = create({
   base: "dark",
   brandTitle: "Lokso UI",
   brandUrl: "https://lokso.ru",
-  brandImage: "plane-lockup-light.svg",
   brandTarget: "_self",
 });
 
