@@ -5,9 +5,9 @@ SERVICE_FOLDER=plane-app
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE="stable"
-export DOCKERHUB_USER=makeplane
+export IMAGE_REGISTRY=ghcr.io/abuhtoyarov
 
-export GH_REPO=makeplane/plane
+export GH_REPO=abuhtoyarov/lokso-app
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
 export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
@@ -591,12 +591,12 @@ fi
 
 # Sync environment variables
 if [ -f "$DOCKER_ENV_PATH" ]; then
-    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
+    IMAGE_REGISTRY=$(getEnvValue "IMAGE_REGISTRY" "$DOCKER_ENV_PATH")
     APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
 
-    if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=makeplane
-        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
+    if [ -z "$IMAGE_REGISTRY" ]; then
+        IMAGE_REGISTRY=ghcr.io/abuhtoyarov
+        updateEnvFile "IMAGE_REGISTRY" "$IMAGE_REGISTRY" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$APP_RELEASE" ]; then
