@@ -135,3 +135,6 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .worklog import WorklogSerializer, WorklogJournalSerializer
+from .worklog_export import WorklogExportSerializer
