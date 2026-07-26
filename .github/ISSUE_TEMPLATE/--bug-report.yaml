@@ -1,73 +1,71 @@
-name: Bug report
-description: Create a bug report to help us improve Plane
-title: "[bug]: "
-labels: [🐛bug, plane]
-assignees: [vihar, pushya22]
+name: Баг-репорт
+description: Сообщите об ошибке, чтобы помочь нам улучшить Локсо
+title: "🐛 Баг: "
+labels: [🐛bug]
 body:
 - type: markdown
   attributes:
     value: |
-      Thank you for taking the time to fill out this bug report.
+      Спасибо, что нашли время заполнить этот баг-репорт.
 - type: checkboxes
   attributes:
-    label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the bug you encountered
+    label: Такой issue уже существует?
+    description: Пожалуйста, проверьте, не создан ли уже issue с описанием этой ошибки
     options:
-    - label: I have searched the existing issues
+    - label: Я проверил(а) существующие issues
       required: true
 - type: textarea
   attributes:
-    label: Current behavior
-    description: A concise description of what you're experiencing and what you expect
+    label: Текущее поведение
+    description: Кратко опишите, что происходит и что вы ожидаете увидеть
     placeholder: |
-      When I do <X>, <Y> happens and I see the error message attached below:
+      Когда я делаю <X>, происходит <Y> и появляется следующее сообщение об ошибке:
       ```...```
-      What I expect is <Z>
+      Я ожидаю, что произойдёт <Z>
   validations:
     required: true
 - type: textarea
   attributes:
-    label: Steps to reproduce
-    description: Add steps to reproduce this behaviour, include console or network logs and screenshots
+    label: Шаги для воспроизведения
+    description: Опишите шаги для воспроизведения этого поведения, приложите логи консоли или сети и скриншоты
     placeholder: |
-      1. Go to '...'
-      2. Click on '....'
-      3. Scroll down to '....'
-      4. See error
+      1. Перейти в '...'
+      2. Нажать на '....'
+      3. Прокрутить вниз до '....'
+      4. Увидеть ошибку
   validations:
     required: true
 - type: dropdown
   id: env
   attributes:
-    label: Environment
+    label: Окружение
     options:
-      - Production
-      - Deploy preview
+      - Продакшн
   validations:
     required: true
 - type: dropdown
   id: browser
   attributes:
-    label: Browser
+    label: Браузер
     options:
       - Google Chrome
       - Mozilla Firefox
       - Safari
-      - Other
+      - Другой
 - type: dropdown
   id: variant
   attributes:
-    label: Variant
+    label: Вариант установки
     options:
-      - Cloud
+      - Облако
       - Self-hosted
-      - Local
+      - Локально
   validations:
     required: true
 - type: input
   id: version
   attributes:
-    label: Version
-    placeholder: v0.17.0-dev
+    label: Версия
+    placeholder: v1.3.1
   validations:
     required: true
