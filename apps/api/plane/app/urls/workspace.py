@@ -36,6 +36,8 @@ from plane.app.views import (
     WorkspaceHomePreferenceViewSet,
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
+    WorkspaceWorklogEndpoint,
+    WorkspaceWorklogSummaryEndpoint,
 )
 
 
@@ -256,5 +258,16 @@ urlpatterns = [
         "workspaces/<str:slug>/sidebar-preferences/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
+    ),
+    # Worklog journal
+    path(
+        "workspaces/<str:slug>/worklogs/",
+        WorkspaceWorklogEndpoint.as_view(),
+        name="workspace-worklogs",
+    ),
+    path(
+        "workspaces/<str:slug>/worklogs/summary/",
+        WorkspaceWorklogSummaryEndpoint.as_view(),
+        name="workspace-worklogs-summary",
     ),
 ]

@@ -239,4 +239,4 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
 
-from .worklog import WorklogViewSet
+from .worklog import WorklogViewSet, WorkspaceWorklogEndpoint, WorkspaceWorklogSummaryEndpoint
