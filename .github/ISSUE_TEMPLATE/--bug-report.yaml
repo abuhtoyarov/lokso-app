@@ -36,14 +36,6 @@ body:
   validations:
     required: true
 - type: dropdown
-  id: env
-  attributes:
-    label: Окружение
-    options:
-      - Продакшн
-  validations:
-    required: true
-- type: dropdown
   id: browser
   attributes:
     label: Браузер
