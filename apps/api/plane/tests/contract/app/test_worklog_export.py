@@ -117,3 +117,97 @@ def test_export_queryset_honours_date_filter(db, workspace, seeded):
         filters={"start_date": "2026-07-21", "end_date": "2026-07-22"},
     )
     assert filtered.count() == 2
+
+
+@pytest.mark.contract
+def test_export_accepts_comma_separated_projects_and_stores_list(session_client, workspace, seeded):
+    """The export must accept the same comma-separated shape the journal
+    accepts for `projects`/`users` — not silently store the raw string, which
+    would later break `__in` filtering in the async task."""
+    with patch("plane.app.views.worklog.base.worklog_export_task.delay"):
+        response = session_client.post(
+            f"/api/workspaces/{workspace.slug}/worklogs/exports/",
+            data={"provider": "csv", "projects": f"{seeded.id}"},
+            format="json",
+        )
+    assert response.status_code == 200
+    history = ExporterHistory.objects.get()
+    assert history.filters["projects"] == [str(seeded.id)]
+
+
+@pytest.mark.contract
+def test_export_accepts_json_list_projects_and_stores_list(session_client, workspace, seeded):
+    with patch("plane.app.views.worklog.base.worklog_export_task.delay"):
+        response = session_client.post(
+            f"/api/workspaces/{workspace.slug}/worklogs/exports/",
+            data={"provider": "csv", "projects": [str(seeded.id)]},
+            format="json",
+        )
+    assert response.status_code == 200
+    history = ExporterHistory.objects.get()
+    assert history.filters["projects"] == [str(seeded.id)]
+
+
+@pytest.mark.contract
+def test_export_unparseable_uuid_returns_400_and_creates_no_row(session_client, workspace, seeded):
+    """A typo'd UUID must fail synchronously at POST time — the same as the
+    journal — rather than becoming an async 'failed' export with no
+    explanation on a billing endpoint."""
+    response = session_client.post(
+        f"/api/workspaces/{workspace.slug}/worklogs/exports/",
+        data={"provider": "csv", "projects": "not-a-uuid"},
+        format="json",
+    )
+    assert response.status_code == 400
+    assert ExporterHistory.objects.count() == 0
+
+
+@pytest.mark.contract
+def test_export_malformed_date_returns_400_and_creates_no_row(session_client, workspace, seeded):
+    response = session_client.post(
+        f"/api/workspaces/{workspace.slug}/worklogs/exports/",
+        data={"provider": "csv", "start_date": "not-a-date"},
+        format="json",
+    )
+    assert response.status_code == 400
+    assert ExporterHistory.objects.count() == 0
+
+
+@pytest.mark.contract
+def test_export_tolerates_stray_commas_and_whitespace(session_client, workspace, seeded):
+    with patch("plane.app.views.worklog.base.worklog_export_task.delay"):
+        response = session_client.post(
+            f"/api/workspaces/{workspace.slug}/worklogs/exports/",
+            data={"provider": "csv", "projects": f" {seeded.id} ,, "},
+            format="json",
+        )
+    assert response.status_code == 200
+    history = ExporterHistory.objects.get()
+    assert history.filters["projects"] == [str(seeded.id)]
+
+
+@pytest.mark.contract
+def test_export_and_journal_querysets_agree_on_same_filters(db, workspace, seeded, create_user):
+    """The defect's root cause: the journal and the export must return the
+    same rows for the same filters, or a downloaded export can silently
+    disagree with what an admin sees on screen."""
+    from plane.app.views.worklog.base import WorkspaceWorklogEndpoint
+    from plane.bgtasks.worklog_export_task import worklog_queryset
+
+    class _Request:
+        GET = {"projects": str(seeded.id), "start_date": "2026-07-21", "end_date": "2026-07-22"}
+
+    journal_ids = set(
+        WorkspaceWorklogEndpoint()
+        ._filtered_queryset(_Request(), workspace.slug)
+        .values_list("id", flat=True)
+    )
+    export_ids = set(
+        worklog_queryset(
+            workspace_id=str(workspace.id),
+            filters={"projects": [str(seeded.id)], "start_date": "2026-07-21", "end_date": "2026-07-22"},
+        ).values_list("id", flat=True)
+    )
+
+    assert journal_ids
+    assert journal_ids == export_ids

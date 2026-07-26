@@ -17,7 +17,24 @@ from plane.utils.porters.exporter import DataExporter
 
 
 def worklog_queryset(workspace_id, filters):
-    """Every row matching the filters — never a single page."""
+    """Every row matching the filters — never a single page.
+
+    Applies the same three base rules as the workspace worklog journal
+    (``WorkspaceWorklogEndpoint._filtered_queryset`` in
+    ``plane.app.views.worklog.base``): scoped to the workspace, only projects
+    with time tracking enabled, and only non-archived projects. Keep these in
+    sync with the journal's queryset — they must always agree, since the
+    export is a download of the same data the journal shows.
+
+    ``filters["users"]`` / ``filters["projects"]``, if present, are already a
+    list of validated UUID strings by the time they reach here —
+    ``WorklogExportEndpoint.post`` normalises and validates both the
+    comma-separated-string and JSON-list shapes via
+    ``_normalize_uuid_list`` before ever creating the ``ExporterHistory`` row,
+    so this never has to guess at (or choke on) the raw client input.
+    ``filters["start_date"]`` / ``filters["end_date"]``, if present, are
+    ISO ``YYYY-MM-DD`` strings already validated via ``_parse_date_param``.
+    """
     queryset = Worklog.objects.filter(
         workspace_id=workspace_id,
         project__is_time_tracking_enabled=True,

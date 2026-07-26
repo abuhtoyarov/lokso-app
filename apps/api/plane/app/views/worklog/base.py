@@ -100,30 +100,51 @@ class WorklogViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def _apply_uuid_list_filter(queryset, field_lookup, raw_value, param_name):
-    """Filter ``queryset`` by a comma-separated list of UUIDs from a query param.
+def _normalize_uuid_list(raw_value, param_name):
+    """Normalise a UUID list filter into a list of validated UUID strings.
 
-    Filters arrive as raw, user-controlled strings, so this has to handle a few
+    Shared by the worklog journal (which receives ``users``/``projects`` as a
+    comma-separated query-string value) and the worklog export endpoint
+    (which receives the same filters as JSON body values, and must accept
+    either shape a client might send: a comma-separated string, or a JSON
+    list). Both callers need identical tolerance and identical rejection
+    behaviour, or a filter that "works" against the journal can silently fail
+    — or silently validate nothing — against the export.
+
+    Filters arrive as raw, user-controlled input, so this has to handle a few
     cases without crashing:
 
-    - Not provided / blank (``None``, ``""``): no filter is applied.
+    - Not provided / blank (``None``, ``""``, ``[]``): returns ``None``, i.e.
+      "no filter".
     - Provided but only punctuation (``","``, ``",,"``), or with stray
-      whitespace/empty segments (``"a,,b"``, trailing ``","``): those blank
-      segments are formatting noise, not typos, and are dropped silently. If
-      nothing is left after dropping them, that's the same as "not provided".
+      whitespace/empty segments (``"a,,b"``, trailing ``","``, blank entries
+      in a list): those blank segments are formatting noise, not typos, and
+      are dropped silently. If nothing is left after dropping them, that's
+      the same as "not provided" (``None``).
     - Provided with a token that isn't a valid UUID at all (``"not-a-uuid"``):
       this is a typo, not formatting noise. Passing it straight to ``__in``
       would raise a database error on a UUID column, and silently dropping it
       (or silently matching nothing) would let a mistyped id quietly change a
       billing total without telling the caller. So this raises a 400 instead,
       the same way a malformed date does.
-    """
-    if not raw_value:
-        return queryset
 
-    tokens = [token.strip() for token in raw_value.split(",") if token.strip()]
+    Returns a list of the validated UUID strings (order preserved, blanks
+    removed) or ``None`` when nothing was provided.
+    """
+    if raw_value is None:
+        return None
+
+    if isinstance(raw_value, str):
+        tokens = [token.strip() for token in raw_value.split(",") if token.strip()]
+    elif isinstance(raw_value, (list, tuple)):
+        tokens = [str(token).strip() for token in raw_value if str(token).strip()]
+    else:
+        raise ParseError(
+            detail=f"Invalid {param_name} value. Expected a comma-separated string or a list of UUIDs."
+        )
+
     if not tokens:
-        return queryset
+        return None
 
     for token in tokens:
         try:
@@ -131,6 +152,14 @@ def _apply_uuid_list_filter(queryset, field_lookup, raw_value, param_name):
         except (ValueError, AttributeError, TypeError) as exc:
             raise ParseError(detail=f"Invalid {param_name} value. '{token}' is not a valid UUID.") from exc
 
+    return tokens
+
+
+def _apply_uuid_list_filter(queryset, field_lookup, raw_value, param_name):
+    """Filter ``queryset`` by a UUID list filter, validated via ``_normalize_uuid_list``."""
+    tokens = _normalize_uuid_list(raw_value, param_name)
+    if tokens is None:
+        return queryset
     return queryset.filter(**{field_lookup: tokens})
 
 
@@ -247,11 +276,29 @@ class WorklogExportEndpoint(BaseAPIView):
             )
 
         workspace = Workspace.objects.get(slug=slug)
-        filters = {
-            key: request.data.get(key)
-            for key in ("users", "projects", "start_date", "end_date")
-            if request.data.get(key)
-        }
+
+        # Accept exactly what the journal accepts (a comma-separated string or
+        # a JSON list for users/projects) and reject the same malformed input
+        # with the same 400, at POST time — before an ``ExporterHistory`` row
+        # exists, so a typo never becomes an async "failed" export with no
+        # explanation. See ``_normalize_uuid_list``/``_parse_date_param``.
+        filters = {}
+
+        users = _normalize_uuid_list(request.data.get("users"), "users")
+        if users:
+            filters["users"] = users
+
+        projects = _normalize_uuid_list(request.data.get("projects"), "projects")
+        if projects:
+            filters["projects"] = projects
+
+        start_date = _parse_date_param(request.data.get("start_date"), "start_date")
+        if start_date:
+            filters["start_date"] = start_date.isoformat()
+
+        end_date = _parse_date_param(request.data.get("end_date"), "end_date")
+        if end_date:
+            filters["end_date"] = end_date.isoformat()
 
         exporter = ExporterHistory.objects.create(
             workspace=workspace,
