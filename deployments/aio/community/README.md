@@ -126,7 +126,7 @@ To build the AIO image yourself:
 
 ```bash
 cd deployments/aio/community
-IMAGE_NAME=my-registry/my-lokso-aio ./build.sh --release=v0.27.1 [--platform=linux/amd64]
+IMAGE_NAME=my-registry/my-lokso-aio ./build.sh --release=1.3.1 [--platform=linux/amd64]
 ```
 
 Available build options:

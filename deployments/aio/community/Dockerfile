@@ -1,4 +1,4 @@
-ARG PLANE_VERSION=v0.27.1
+ARG PLANE_VERSION=1.3.1
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
 # **************************************************
