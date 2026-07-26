@@ -1014,6 +1014,69 @@ def delete_link_activity(
     )
 
 
+def create_worklog_activity(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="logged time",
+            verb="created",
+            actor_id=actor_id,
+            field="worklog",
+            new_value=str(requested_data.get("duration")),
+            new_identifier=requested_data.get("id"),
+            epoch=epoch,
+        )
+    )
+
+
+def update_worklog_activity(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    if requested_data.get("duration") != current_instance.get("duration"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated logged time",
+                verb="updated",
+                actor_id=actor_id,
+                field="worklog",
+                old_value=str(current_instance.get("duration")),
+                new_value=str(requested_data.get("duration")),
+                new_identifier=current_instance.get("id"),
+                epoch=epoch,
+            )
+        )
+
+
+def delete_worklog_activity(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    current_instance = json.loads(current_instance) if current_instance is not None else None
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="deleted logged time",
+            verb="deleted",
+            actor_id=actor_id,
+            field="worklog",
+            old_value=str(current_instance.get("duration")),
+            new_identifier=current_instance.get("id"),
+            epoch=epoch,
+        )
+    )
+
+
 def create_attachment_activity(
     requested_data,
     current_instance,
@@ -1551,6 +1614,9 @@ def issue_activity(
             "link.activity.created": create_link_activity,
             "link.activity.updated": update_link_activity,
             "link.activity.deleted": delete_link_activity,
+            "worklog.activity.created": create_worklog_activity,
+            "worklog.activity.updated": update_worklog_activity,
+            "worklog.activity.deleted": delete_worklog_activity,
             "attachment.activity.created": create_attachment_activity,
             "attachment.activity.deleted": delete_attachment_activity,
             "issue_relation.activity.created": create_issue_relation_activity,
