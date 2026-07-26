@@ -3,8 +3,10 @@ FROM python:3.12.10-alpine
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+# No Lokso changelog page exists; leave unset so the product-updates panel
+# falls back to the "visit our changelog" empty state instead of an iframe.
+ENV INSTANCE_CHANGELOG_URL=
 
 # Update system packages for security
 RUN apk update && apk upgrade
