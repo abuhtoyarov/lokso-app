@@ -17,7 +17,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE, WorklogPermission
-from plane.app.serializers import WorklogSerializer
+from plane.app.serializers import WorklogJournalSerializer, WorklogSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Worklog
 
@@ -99,21 +99,23 @@ class WorklogViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def _apply_uuid_list_filter(queryset, field_lookup, raw_value):
+def _apply_uuid_list_filter(queryset, field_lookup, raw_value, param_name):
     """Filter ``queryset`` by a comma-separated list of UUIDs from a query param.
 
-    Filters arrive as raw, user-controlled strings, so this has to handle three
+    Filters arrive as raw, user-controlled strings, so this has to handle a few
     cases without crashing:
 
     - Not provided / blank (``None``, ``""``): no filter is applied.
-    - Provided but only punctuation (``","``, ``",,"``): after stripping blank
-      segments there is nothing left to filter on, so treated the same as "not
-      provided" — the parameter carried no actual value.
-    - Provided with content that isn't a valid UUID (``"not-a-uuid"``): passing
-      that straight to ``__in`` would raise a database error on a UUID column.
-      Dropping the bad token and applying no filter would silently *widen* the
-      result set to everything, which is the wrong direction for a filter the
-      caller explicitly asked for — so this matches nothing instead.
+    - Provided but only punctuation (``","``, ``",,"``), or with stray
+      whitespace/empty segments (``"a,,b"``, trailing ``","``): those blank
+      segments are formatting noise, not typos, and are dropped silently. If
+      nothing is left after dropping them, that's the same as "not provided".
+    - Provided with a token that isn't a valid UUID at all (``"not-a-uuid"``):
+      this is a typo, not formatting noise. Passing it straight to ``__in``
+      would raise a database error on a UUID column, and silently dropping it
+      (or silently matching nothing) would let a mistyped id quietly change a
+      billing total without telling the caller. So this raises a 400 instead,
+      the same way a malformed date does.
     """
     if not raw_value:
         return queryset
@@ -122,18 +124,13 @@ def _apply_uuid_list_filter(queryset, field_lookup, raw_value):
     if not tokens:
         return queryset
 
-    valid_tokens = []
     for token in tokens:
         try:
             uuid.UUID(token)
-        except (ValueError, AttributeError, TypeError):
-            continue
-        valid_tokens.append(token)
+        except (ValueError, AttributeError, TypeError) as exc:
+            raise ParseError(detail=f"Invalid {param_name} value. '{token}' is not a valid UUID.") from exc
 
-    if not valid_tokens:
-        return queryset.none()
-
-    return queryset.filter(**{field_lookup: valid_tokens})
+    return queryset.filter(**{field_lookup: tokens})
 
 
 def _parse_date_param(value, param_name):
@@ -172,8 +169,8 @@ class WorkspaceWorklogEndpoint(BaseAPIView):
             project__archived_at__isnull=True,
         ).select_related("project", "issue", "logged_by")
 
-        queryset = _apply_uuid_list_filter(queryset, "logged_by_id__in", request.GET.get("users"))
-        queryset = _apply_uuid_list_filter(queryset, "project_id__in", request.GET.get("projects"))
+        queryset = _apply_uuid_list_filter(queryset, "logged_by_id__in", request.GET.get("users"), "users")
+        queryset = _apply_uuid_list_filter(queryset, "project_id__in", request.GET.get("projects"), "projects")
 
         start_date = _parse_date_param(request.GET.get("start_date"), "start_date")
         if start_date:
@@ -185,12 +182,32 @@ class WorkspaceWorklogEndpoint(BaseAPIView):
 
         return queryset
 
+    #: Columns the journal serializer actually reads. Passed to ``.only()`` so
+    #: the ``select_related`` joins in ``_filtered_queryset`` stop pulling
+    #: every column of the joined rows (e.g. ``issues.description_binary``,
+    #: ``issues.description_html``, ``users.password``) just to discard them.
+    JOURNAL_ONLY_FIELDS = (
+        "id",
+        "duration",
+        "logged_at",
+        "description",
+        "project_id",
+        "issue_id",
+        "logged_by_id",
+        "project__name",
+        "project__identifier",
+        "issue__name",
+        "issue__sequence_id",
+        "logged_by__display_name",
+    )
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug):
+        queryset = self._filtered_queryset(request, slug).only(*self.JOURNAL_ONLY_FIELDS)
         return self.paginate(
             request=request,
-            queryset=self._filtered_queryset(request, slug),
-            on_results=lambda worklogs: WorklogSerializer(worklogs, many=True).data,
+            queryset=queryset,
+            on_results=lambda worklogs: WorklogJournalSerializer(worklogs, many=True).data,
         )
 
 
