@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=${BRANCH:-master}
+BRANCH=${BRANCH:-main}
 SERVICE_FOLDER=plane-app
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
@@ -24,14 +24,9 @@ clear
 
 cat <<"EOF"
 --------------------------------------------
- ____  _                          ///////// 
-|  _ \| | __ _ _ __   ___         ///////// 
-| |_) | |/ _` | '_ \ / _ \   /////    ///// 
-|  __/| | (_| | | | |  __/   /////    ///// 
-|_|   |_|\__,_|_| |_|\___|        ////      
-                                  ////      
+                   LOKSO
 --------------------------------------------
-Project management tool from the future
+Task tracker for your team
 --------------------------------------------
 EOF
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=${BRANCH:-master}
+BRANCH=${BRANCH:-main}
 SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
@@ -23,16 +23,9 @@ function print_header() {
 clear
 
 cat <<"EOF"
-##+.    ##+    .##-                  
- ######+.######-.######.              
- #######.   -###    +#####+.          
- #######.      +       +######.       
- #######.              .#######       
- #######.              .#######       
-  #######       +      .#######       
-    .+#####+    ###-   .#######       
-        .######.-#####+.+######       
-            -##.    -##    .+##
+--------------------------------------
+                LOKSO
+--------------------------------------
 EOF
 }
 
