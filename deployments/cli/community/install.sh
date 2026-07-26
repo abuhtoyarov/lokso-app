@@ -5,9 +5,9 @@ SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
 export APP_RELEASE=stable
-export DOCKERHUB_USER=makeplane
+export IMAGE_REGISTRY=ghcr.io/abuhtoyarov
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
-export GH_REPO=makeplane/plane
+export GH_REPO=abuhtoyarov/lokso-app
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
 export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
@@ -77,7 +77,7 @@ function initialize(){
         return 1
     fi
 
-    local IMAGE_NAME=makeplane/plane-proxy
+    local IMAGE_NAME="${IMAGE_REGISTRY}/lokso-proxy"
     local IMAGE_TAG=${APP_RELEASE}
     docker manifest inspect "${IMAGE_NAME}:${IMAGE_TAG}" | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
     local pid=$!
@@ -153,7 +153,7 @@ function updateEnvFile() {
 
 function updateCustomVariables(){
     echo "Updating custom variables..." >&2
-    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
+    updateEnvFile "IMAGE_REGISTRY" "$IMAGE_REGISTRY" "$DOCKER_ENV_PATH"
     updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
     updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
     updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
@@ -185,7 +185,7 @@ function syncEnvFile(){
 function buildYourOwnImage(){
     echo "Building images locally..."
 
-    export DOCKERHUB_USER="myplane"
+    export IMAGE_REGISTRY="local"
     export APP_RELEASE="local"
     export PULL_POLICY="never"
     CUSTOM_BUILD="true"
@@ -303,7 +303,7 @@ function download() {
     syncEnvFile
 
     if [ "$LOCAL_BUILD" == "true" ]; then
-        export DOCKERHUB_USER="myplane"
+        export IMAGE_REGISTRY="local"
         export APP_RELEASE="local"
         export PULL_POLICY="never"
         CUSTOM_BUILD="true"
@@ -684,14 +684,14 @@ elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
 fi
 
 if [ -f "$DOCKER_ENV_PATH" ]; then
-    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
+    IMAGE_REGISTRY=$(getEnvValue "IMAGE_REGISTRY" "$DOCKER_ENV_PATH")
     APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
     PULL_POLICY=$(getEnvValue "PULL_POLICY" "$DOCKER_ENV_PATH")
     CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
 
-    if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=makeplane
-        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
+    if [ -z "$IMAGE_REGISTRY" ]; then
+        IMAGE_REGISTRY=ghcr.io/abuhtoyarov
+        updateEnvFile "IMAGE_REGISTRY" "$IMAGE_REGISTRY" "$DOCKER_ENV_PATH"
     fi
 
     if [ -z "$APP_RELEASE" ]; then
