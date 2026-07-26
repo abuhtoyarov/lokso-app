@@ -7,7 +7,6 @@
 from datetime import date
 
 import pytest
-from django.urls import reverse
 
 from plane.db.models import Issue, Project, ProjectMember, Worklog
 from plane.db.models.project import ROLE
@@ -176,3 +175,32 @@ def test_guest_cannot_log_time(session_client, workspace, project, issue, create
         format="json",
     )
     assert response.status_code == 403
+
+
+@pytest.mark.contract
+def test_guest_can_read_worklogs(session_client, workspace, project, issue, create_user):
+    ProjectMember.objects.filter(project=project, member=create_user).update(role=ROLE.GUEST.value)
+    Worklog.objects.create(
+        project=project, issue=issue, logged_by=create_user, created_by=create_user,
+        duration=60, logged_at=date(2026, 7, 20),
+    )
+    response = session_client.get(_list_url(workspace, project, issue))
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+
+@pytest.mark.contract
+def test_guest_cannot_edit_worklog(session_client, workspace, project, issue, create_user):
+    ProjectMember.objects.filter(project=project, member=create_user).update(role=ROLE.GUEST.value)
+    worklog = Worklog.objects.create(
+        project=project, issue=issue, logged_by=create_user, created_by=create_user,
+        duration=60, logged_at=date(2026, 7, 20),
+    )
+    response = session_client.patch(
+        _detail_url(workspace, project, issue, worklog),
+        data={"duration": 90},
+        format="json",
+    )
+    assert response.status_code == 403
+    worklog.refresh_from_db()
+    assert worklog.duration == 60

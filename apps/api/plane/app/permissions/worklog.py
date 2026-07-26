@@ -29,6 +29,14 @@ class WorklogPermission(BasePermission):
         ).exists():
             return False
 
+        if request.method in SAFE_METHODS:
+            return ProjectMember.objects.filter(
+                workspace__slug=view.workspace_slug,
+                project_id=view.project_id,
+                member=request.user,
+                is_active=True,
+            ).exists()
+
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             project_id=view.project_id,
