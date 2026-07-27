@@ -13,6 +13,7 @@ export * from "./common";
 export * from "./cycle";
 export * from "./datetime";
 export * from "./distribution-update";
+export * from "./duration";
 export * from "./editor";
 export * from "./emoji";
 export * from "./estimates";
