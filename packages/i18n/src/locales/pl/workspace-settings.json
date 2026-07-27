@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Logi pracy",
         "heading": "Logi pracy",
-        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
+        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie.",
+        "filters": {
+          "users": "Użytkownicy",
+          "projects": "Projekty",
+          "start_date": "Data początku",
+          "end_date": "Data zakończenia"
+        },
+        "table": {
+          "project": "Projekt",
+          "issue": "Element pracy",
+          "logged": "Zarejestrowano",
+          "time": "Czas",
+          "logged_by_on": "{name} w dniu {date}"
+        },
+        "total": "Suma dla bieżącego filtra: {duration}",
+        "download": "Pobierz",
+        "previous_downloads": "Poprzednie pobrania",
+        "export_status": {
+          "queued": "W kolejce",
+          "processing": "Przygotowywanie",
+          "completed": "Gotowe",
+          "failed": "Nieudane"
+        }
       },
       "group_syncing": {
         "title": "Synchronizacja grup",

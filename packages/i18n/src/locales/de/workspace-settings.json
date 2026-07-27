@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Arbeitsberichte",
         "heading": "Arbeitsberichte",
-        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter."
+        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter.",
+        "filters": {
+          "users": "Benutzer",
+          "projects": "Projekte",
+          "start_date": "Startdatum",
+          "end_date": "Enddatum"
+        },
+        "table": {
+          "project": "Projekt",
+          "issue": "Arbeitselement",
+          "logged": "Erfasst",
+          "time": "Zeit",
+          "logged_by_on": "{name} am {date}"
+        },
+        "total": "Gesamt für den aktuellen Filter: {duration}",
+        "download": "Herunterladen",
+        "previous_downloads": "Bisherige Downloads",
+        "export_status": {
+          "queued": "In Warteschlange",
+          "processing": "Wird vorbereitet",
+          "completed": "Bereit",
+          "failed": "Fehlgeschlagen"
+        }
       },
       "group_syncing": {
         "title": "Gruppensynchronisation",

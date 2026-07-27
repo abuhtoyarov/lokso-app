@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Workloglar",
         "heading": "Workloglar",
-        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
+        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin.",
+        "filters": {
+          "users": "Kullanıcılar",
+          "projects": "Projeler",
+          "start_date": "Başlangıç tarihi",
+          "end_date": "Bitiş tarihi"
+        },
+        "table": {
+          "project": "Proje",
+          "issue": "İş öğesi",
+          "logged": "Kaydedildi",
+          "time": "Süre",
+          "logged_by_on": "{name} - {date}"
+        },
+        "total": "Geçerli filtre için toplam: {duration}",
+        "download": "İndir",
+        "previous_downloads": "Önceki indirmeler",
+        "export_status": {
+          "queued": "Sırada",
+          "processing": "Hazırlanıyor",
+          "completed": "Hazır",
+          "failed": "Başarısız"
+        }
       },
       "group_syncing": {
         "title": "Grup senkronizasyonu",

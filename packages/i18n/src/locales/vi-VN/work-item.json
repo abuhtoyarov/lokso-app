@@ -422,5 +422,25 @@
       "label": "Tiêu đề sử thi",
       "required": "Tiêu đề sử thi là bắt buộc"
     }
+  },
+  "worklog": {
+    "tracked_time": "Thời gian đã theo dõi",
+    "log_work": "Ghi nhận thời gian làm việc",
+    "hours": "Giờ",
+    "minutes": "Phút",
+    "work_date": "Ngày",
+    "description": "Mô tả",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete_entry": "Xóa mục",
+    "edit_entry": "Chỉnh sửa mục",
+    "invalid_duration": "Nhập khoảng thời gian lớn hơn 0",
+    "activity": {
+      "created": "đã ghi nhận {duration}",
+      "updated": "đã thay đổi thời gian ghi nhận từ {old} thành {new}",
+      "logged_at_updated": "đã di chuyển một mục thời gian từ {old} sang {new}",
+      "description_updated": "đã chỉnh sửa ghi chú của một mục thời gian",
+      "deleted": "đã xóa một mục thời gian {duration}"
+    }
   }
 }

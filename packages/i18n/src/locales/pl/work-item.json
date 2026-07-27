@@ -422,5 +422,25 @@
       "label": "Tytuł epiku",
       "required": "Tytuł epiku jest wymagany."
     }
+  },
+  "worklog": {
+    "tracked_time": "Śledzony czas",
+    "log_work": "Zarejestruj czas pracy",
+    "hours": "Godziny",
+    "minutes": "Minuty",
+    "work_date": "Data",
+    "description": "Opis",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete_entry": "Usuń wpis",
+    "edit_entry": "Edytuj wpis",
+    "invalid_duration": "Podaj czas trwania większy niż zero",
+    "activity": {
+      "created": "zarejestrował {duration}",
+      "updated": "zmienił zarejestrowany czas z {old} na {new}",
+      "logged_at_updated": "przeniósł wpis czasu z {old} na {new}",
+      "description_updated": "edytował notatkę wpisu czasu",
+      "deleted": "usunął wpis czasu o długości {duration}"
+    }
   }
 }

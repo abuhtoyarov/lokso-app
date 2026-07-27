@@ -422,5 +422,25 @@
       "label": "Назва епіку",
       "required": "Назва епіку є обов'язковою."
     }
+  },
+  "worklog": {
+    "tracked_time": "Відстежений час",
+    "log_work": "Записати час",
+    "hours": "Години",
+    "minutes": "Хвилини",
+    "work_date": "Дата",
+    "description": "Опис",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "delete_entry": "Видалити запис",
+    "edit_entry": "Редагувати запис",
+    "invalid_duration": "Введіть тривалість більшу за нуль",
+    "activity": {
+      "created": "записав {duration}",
+      "updated": "змінив записаний час з {old} на {new}",
+      "logged_at_updated": "перемістив запис часу з {old} на {new}",
+      "description_updated": "відредагував примітку до запису часу",
+      "deleted": "видалив запис часу тривалістю {duration}"
+    }
   }
 }

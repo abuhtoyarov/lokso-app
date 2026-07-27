@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Log kerja",
         "heading": "Log kerja",
-        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun."
+        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun.",
+        "filters": {
+          "users": "Pengguna",
+          "projects": "Proyek",
+          "start_date": "Tanggal mulai",
+          "end_date": "Tanggal akhir"
+        },
+        "table": {
+          "project": "Proyek",
+          "issue": "Item kerja",
+          "logged": "Tercatat",
+          "time": "Waktu",
+          "logged_by_on": "{name} pada {date}"
+        },
+        "total": "Total untuk filter saat ini: {duration}",
+        "download": "Unduh",
+        "previous_downloads": "Unduhan sebelumnya",
+        "export_status": {
+          "queued": "Dalam antrean",
+          "processing": "Menyiapkan",
+          "completed": "Siap",
+          "failed": "Gagal"
+        }
       },
       "group_syncing": {
         "title": "Sinkronisasi grup",

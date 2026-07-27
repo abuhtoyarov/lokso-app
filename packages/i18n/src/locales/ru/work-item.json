@@ -422,5 +422,25 @@
       "label": "Название эпика",
       "required": "Название эпика обязательно"
     }
+  },
+  "worklog": {
+    "tracked_time": "Отслеженное время",
+    "log_work": "Записать время",
+    "hours": "Часы",
+    "minutes": "Минуты",
+    "work_date": "Дата",
+    "description": "Описание",
+    "save": "Сохранить",
+    "cancel": "Отменить",
+    "delete_entry": "Удалить запись",
+    "edit_entry": "Изменить запись",
+    "invalid_duration": "Введите продолжительность больше нуля",
+    "activity": {
+      "created": "записал {duration}",
+      "updated": "изменил записанное время с {old} на {new}",
+      "logged_at_updated": "перенёс запись времени с {old} на {new}",
+      "description_updated": "отредактировал заметку к записи времени",
+      "deleted": "удалил запись времени на {duration}"
+    }
   }
 }

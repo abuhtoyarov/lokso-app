@@ -422,5 +422,25 @@
       "label": "Epic Title",
       "required": "Epic title is required."
     }
+  },
+  "worklog": {
+    "tracked_time": "Tracked time",
+    "log_work": "Log work",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "work_date": "Date",
+    "description": "Description",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete_entry": "Delete entry",
+    "edit_entry": "Edit entry",
+    "invalid_duration": "Enter a duration greater than zero",
+    "activity": {
+      "created": "logged {duration}",
+      "updated": "changed logged time from {old} to {new}",
+      "logged_at_updated": "moved a time entry from {old} to {new}",
+      "description_updated": "edited a time entry's note",
+      "deleted": "removed a time entry of {duration}"
+    }
   }
 }

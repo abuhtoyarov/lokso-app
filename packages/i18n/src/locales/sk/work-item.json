@@ -422,5 +422,25 @@
       "label": "Názov epiky",
       "required": "Názov epiky je povinný."
     }
+  },
+  "worklog": {
+    "tracked_time": "Sledovaný čas",
+    "log_work": "Zaznamenať čas",
+    "hours": "Hodiny",
+    "minutes": "Minúty",
+    "work_date": "Dátum",
+    "description": "Popis",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "delete_entry": "Odstrániť záznam",
+    "edit_entry": "Upraviť záznam",
+    "invalid_duration": "Zadajte trvanie väčšie ako nula",
+    "activity": {
+      "created": "zaznamenal {duration}",
+      "updated": "zmenil zaznamenaný čas z {old} na {new}",
+      "logged_at_updated": "presunul záznam času z {old} na {new}",
+      "description_updated": "upravil poznámku k záznamu času",
+      "deleted": "odstránil záznam času v trvaní {duration}"
+    }
   }
 }

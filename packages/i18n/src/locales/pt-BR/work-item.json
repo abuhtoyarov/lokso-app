@@ -422,5 +422,25 @@
       "label": "Título do Épico",
       "required": "O título do épico é obrigatório."
     }
+  },
+  "worklog": {
+    "tracked_time": "Tempo registrado",
+    "log_work": "Registrar trabalho",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "work_date": "Data",
+    "description": "Descrição",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete_entry": "Excluir registro",
+    "edit_entry": "Editar registro",
+    "invalid_duration": "Insira uma duração maior que zero",
+    "activity": {
+      "created": "registrou {duration}",
+      "updated": "alterou o tempo registrado de {old} para {new}",
+      "logged_at_updated": "moveu um registro de tempo de {old} para {new}",
+      "description_updated": "editou a nota de um registro de tempo",
+      "deleted": "removeu um registro de tempo de {duration}"
+    }
   }
 }

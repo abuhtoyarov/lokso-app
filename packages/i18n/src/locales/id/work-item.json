@@ -422,5 +422,25 @@
       "label": "Judul Epik",
       "required": "Judul epik wajib diisi."
     }
+  },
+  "worklog": {
+    "tracked_time": "Waktu yang dilacak",
+    "log_work": "Catat waktu kerja",
+    "hours": "Jam",
+    "minutes": "Menit",
+    "work_date": "Tanggal",
+    "description": "Deskripsi",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete_entry": "Hapus entri",
+    "edit_entry": "Edit entri",
+    "invalid_duration": "Masukkan durasi lebih besar dari nol",
+    "activity": {
+      "created": "mencatat {duration}",
+      "updated": "mengubah waktu tercatat dari {old} menjadi {new}",
+      "logged_at_updated": "memindahkan entri waktu dari {old} ke {new}",
+      "description_updated": "mengedit catatan entri waktu",
+      "deleted": "menghapus entri waktu sebesar {duration}"
+    }
   }
 }

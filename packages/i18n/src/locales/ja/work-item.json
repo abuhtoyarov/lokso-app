@@ -422,5 +422,25 @@
       "label": "エピックのタイトル",
       "required": "エピックのタイトルは必須です。"
     }
+  },
+  "worklog": {
+    "tracked_time": "追跡時間",
+    "log_work": "作業時間を記録",
+    "hours": "時間",
+    "minutes": "分",
+    "work_date": "日付",
+    "description": "説明",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete_entry": "エントリを削除",
+    "edit_entry": "エントリを編集",
+    "invalid_duration": "0より大きい時間を入力してください",
+    "activity": {
+      "created": "{duration}を記録しました",
+      "updated": "記録時間を{old}から{new}に変更しました",
+      "logged_at_updated": "時間記録を{old}から{new}に移動しました",
+      "description_updated": "時間記録のメモを編集しました",
+      "deleted": "{duration}の時間記録を削除しました"
+    }
   }
 }
