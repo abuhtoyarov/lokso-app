@@ -436,11 +436,11 @@
     "edit_entry": "Изменить запись",
     "invalid_duration": "Введите продолжительность больше нуля",
     "activity": {
-      "created": "записал {duration}",
-      "updated": "изменил записанное время с {old} на {new}",
-      "logged_at_updated": "перенёс запись времени с {old} на {new}",
-      "description_updated": "отредактировал заметку к записи времени",
-      "deleted": "удалил запись времени на {duration}"
+      "created": "записывает {duration}",
+      "updated": "изменяет записанное время с {old} на {new}",
+      "logged_at_updated": "переносит запись времени с {old} на {new}",
+      "description_updated": "редактирует заметку к записи времени",
+      "deleted": "удаляет запись времени на {duration}"
     }
   }
 }

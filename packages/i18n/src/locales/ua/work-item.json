@@ -436,11 +436,11 @@
     "edit_entry": "Редагувати запис",
     "invalid_duration": "Введіть тривалість більшу за нуль",
     "activity": {
-      "created": "записав {duration}",
-      "updated": "змінив записаний час з {old} на {new}",
-      "logged_at_updated": "перемістив запис часу з {old} на {new}",
-      "description_updated": "відредагував примітку до запису часу",
-      "deleted": "видалив запис часу тривалістю {duration}"
+      "created": "записує {duration}",
+      "updated": "змінює записаний час з {old} на {new}",
+      "logged_at_updated": "переміщує запис часу з {old} на {new}",
+      "description_updated": "редагує примітку до запису часу",
+      "deleted": "видаляє запис часу тривалістю {duration}"
     }
   }
 }

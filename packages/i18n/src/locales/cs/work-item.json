@@ -436,11 +436,11 @@
     "edit_entry": "Upravit záznam",
     "invalid_duration": "Zadejte dobu delší než nula",
     "activity": {
-      "created": "zaznamenal {duration}",
-      "updated": "změnil zaznamenaný čas z {old} na {new}",
-      "logged_at_updated": "přesunul záznam času z {old} na {new}",
-      "description_updated": "upravil poznámku k záznamu času",
-      "deleted": "odstranil záznam času v délce {duration}"
+      "created": "zaznamenává {duration}",
+      "updated": "mění zaznamenaný čas z {old} na {new}",
+      "logged_at_updated": "přesouvá záznam času z {old} na {new}",
+      "description_updated": "upravuje poznámku k záznamu času",
+      "deleted": "odstraňuje záznam času v délce {duration}"
     }
   }
 }

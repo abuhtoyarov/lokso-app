@@ -436,11 +436,11 @@
     "edit_entry": "Edytuj wpis",
     "invalid_duration": "Podaj czas trwania większy niż zero",
     "activity": {
-      "created": "zarejestrował {duration}",
-      "updated": "zmienił zarejestrowany czas z {old} na {new}",
-      "logged_at_updated": "przeniósł wpis czasu z {old} na {new}",
-      "description_updated": "edytował notatkę wpisu czasu",
-      "deleted": "usunął wpis czasu o długości {duration}"
+      "created": "rejestruje {duration}",
+      "updated": "zmienia zarejestrowany czas z {old} na {new}",
+      "logged_at_updated": "przenosi wpis czasu z {old} na {new}",
+      "description_updated": "edytuje notatkę wpisu czasu",
+      "deleted": "usuwa wpis czasu o długości {duration}"
     }
   }
 }
