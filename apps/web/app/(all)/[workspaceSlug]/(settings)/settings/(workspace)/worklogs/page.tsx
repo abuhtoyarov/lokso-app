@@ -25,6 +25,8 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import {
   EMPTY_WORKLOG_JOURNAL_FILTERS,
+  WorklogExportButton,
+  WorklogExportHistory,
   WorklogJournalFilters,
   WorklogJournalSummary,
   WorklogJournalTable,
@@ -103,6 +105,10 @@ function WorklogsPage() {
         <SettingsHeading
           title={t("workspace_settings.settings.worklogs.heading")}
           description={t("workspace_settings.settings.worklogs.description")}
+          control={
+            canViewWorklogs &&
+            workspaceSlugStr && <WorklogExportButton workspaceSlug={workspaceSlugStr} filters={apiFilters} />
+          }
         />
         <WorklogJournalFilters filters={filters} onChange={handleFiltersChange} />
         <WorklogJournalSummary totalDuration={totalDuration} />
@@ -145,6 +151,7 @@ function WorklogsPage() {
             rootClassName="py-20"
           />
         )}
+        {canViewWorklogs && workspaceSlugStr && <WorklogExportHistory workspaceSlug={workspaceSlugStr} />}
       </div>
     </SettingsContentWrapper>
   );
