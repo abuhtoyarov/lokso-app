@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Registrazioni di lavoro",
         "heading": "Registrazioni di lavoro",
-        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto."
+        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto.",
+        "filters": {
+          "users": "Utenti",
+          "projects": "Progetti",
+          "start_date": "Data di inizio",
+          "end_date": "Data di fine"
+        },
+        "table": {
+          "project": "Progetto",
+          "issue": "Elemento di lavoro",
+          "logged": "Registrato",
+          "time": "Tempo",
+          "logged_by_on": "{name} il {date}"
+        },
+        "total": "Totale per il filtro attuale: {duration}",
+        "download": "Scarica",
+        "previous_downloads": "Download precedenti",
+        "export_status": {
+          "queued": "In coda",
+          "processing": "In preparazione",
+          "completed": "Pronto",
+          "failed": "Non riuscito"
+        }
       },
       "group_syncing": {
         "title": "Sincronizzazione gruppi",

@@ -422,5 +422,25 @@
       "label": "Titlu sarcină majoră",
       "required": "Titlul sarcinii majore este obligatoriu."
     }
+  },
+  "worklog": {
+    "tracked_time": "Timp urmărit",
+    "log_work": "Înregistrează timp",
+    "hours": "Ore",
+    "minutes": "Minute",
+    "work_date": "Data",
+    "description": "Descriere",
+    "save": "Salvează",
+    "cancel": "Anulează",
+    "delete_entry": "Șterge intrarea",
+    "edit_entry": "Editează intrarea",
+    "invalid_duration": "Introduceți o durată mai mare decât zero",
+    "activity": {
+      "created": "a înregistrat {duration}",
+      "updated": "a schimbat timpul înregistrat din {old} în {new}",
+      "logged_at_updated": "a mutat o înregistrare de timp din {old} în {new}",
+      "description_updated": "a editat nota unei înregistrări de timp",
+      "deleted": "a eliminat o înregistrare de timp de {duration}"
+    }
   }
 }

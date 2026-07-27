@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "工作日誌",
         "heading": "工作日誌",
-        "description": "下載任何專案中任何人的工作日誌（即工時表）。"
+        "description": "下載任何專案中任何人的工作日誌（即工時表）。",
+        "filters": {
+          "users": "使用者",
+          "projects": "專案",
+          "start_date": "開始日期",
+          "end_date": "結束日期"
+        },
+        "table": {
+          "project": "專案",
+          "issue": "工作事項",
+          "logged": "已記錄",
+          "time": "時間",
+          "logged_by_on": "{name}（{date}）"
+        },
+        "total": "目前篩選條件總計：{duration}",
+        "download": "下載",
+        "previous_downloads": "先前的下載",
+        "export_status": {
+          "queued": "排隊中",
+          "processing": "準備中",
+          "completed": "已就緒",
+          "failed": "失敗"
+        }
       },
       "group_syncing": {
         "title": "群組同步",

@@ -422,5 +422,25 @@
       "label": "Título del Epic",
       "required": "El título del epic es obligatorio."
     }
+  },
+  "worklog": {
+    "tracked_time": "Tiempo registrado",
+    "log_work": "Registrar trabajo",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "work_date": "Fecha",
+    "description": "Descripción",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete_entry": "Eliminar entrada",
+    "edit_entry": "Editar entrada",
+    "invalid_duration": "Introduzca una duración mayor que cero",
+    "activity": {
+      "created": "registró {duration}",
+      "updated": "cambió el tiempo registrado de {old} a {new}",
+      "logged_at_updated": "movió una entrada de tiempo de {old} a {new}",
+      "description_updated": "editó la nota de una entrada de tiempo",
+      "deleted": "eliminó una entrada de tiempo de {duration}"
+    }
   }
 }

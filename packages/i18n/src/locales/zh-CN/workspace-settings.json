@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "工作日志",
         "heading": "工作日志",
-        "description": "为任何项目中的任何人下载工作日志（即工时表）。"
+        "description": "为任何项目中的任何人下载工作日志（即工时表）。",
+        "filters": {
+          "users": "用户",
+          "projects": "项目",
+          "start_date": "开始日期",
+          "end_date": "结束日期"
+        },
+        "table": {
+          "project": "项目",
+          "issue": "工作项",
+          "logged": "已记录",
+          "time": "时间",
+          "logged_by_on": "{name}（{date}）"
+        },
+        "total": "当前筛选条件总计：{duration}",
+        "download": "下载",
+        "previous_downloads": "以前的下载",
+        "export_status": {
+          "queued": "排队中",
+          "processing": "准备中",
+          "completed": "已就绪",
+          "failed": "失败"
+        }
       },
       "group_syncing": {
         "title": "组同步",

@@ -52,13 +52,11 @@ function WorkspaceInvitationPage() {
         accepted: true,
         token: token,
       })
-      .then(() => {
-        if (invitationDetail.email === currentUser?.email) {
-          router.push(`/${invitationDetail.workspace.slug}`);
-        } else {
-          router.push("/");
-        }
-      })
+      .then(() =>
+        invitationDetail.email === currentUser?.email
+          ? router.push(`/${invitationDetail.workspace.slug}`)
+          : router.push("/")
+      )
       .catch((err: unknown) => console.error(err));
   };
 
@@ -69,9 +67,7 @@ function WorkspaceInvitationPage() {
         accepted: false,
         token: token,
       })
-      .then(() => {
-        router.push("/");
-      })
+      .then(() => router.push("/"))
       .catch((err: unknown) => console.error(err));
   };
 
@@ -112,11 +108,7 @@ function WorkspaceInvitationPage() {
                 <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
               )}
               <EmptySpaceItem Icon={Star} title="Star us on GitHub" href="https://github.com/abuhtoyarov/lokso-app" />
-              <EmptySpaceItem
-                Icon={Share2}
-                title="Join our community of active creators"
-                href="https://lokso.ru"
-              />
+              <EmptySpaceItem Icon={Share2} title="Join our community of active creators" href="https://lokso.ru" />
             </EmptySpace>
           )
         ) : (

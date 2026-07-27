@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Worklogs",
         "heading": "Worklogs",
-        "description": "Download worklogs AKA timesheets for anyone in any project."
+        "description": "Download worklogs AKA timesheets for anyone in any project.",
+        "filters": {
+          "users": "Users",
+          "projects": "Projects",
+          "start_date": "Start date",
+          "end_date": "End date"
+        },
+        "table": {
+          "project": "Project",
+          "issue": "Work item",
+          "logged": "Logged",
+          "time": "Time",
+          "logged_by_on": "{name} on {date}"
+        },
+        "total": "Total for the current filter: {duration}",
+        "download": "Download",
+        "previous_downloads": "Previous downloads",
+        "export_status": {
+          "queued": "Queued",
+          "processing": "Preparing",
+          "completed": "Ready",
+          "failed": "Failed"
+        }
       },
       "group_syncing": {
         "title": "Group syncing",

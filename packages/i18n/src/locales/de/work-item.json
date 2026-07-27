@@ -422,5 +422,25 @@
       "label": "Epic-Titel",
       "required": "Ein Titel für das Epic ist erforderlich."
     }
+  },
+  "worklog": {
+    "tracked_time": "Erfasste Zeit",
+    "log_work": "Zeit erfassen",
+    "hours": "Stunden",
+    "minutes": "Minuten",
+    "work_date": "Datum",
+    "description": "Beschreibung",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete_entry": "Eintrag löschen",
+    "edit_entry": "Eintrag bearbeiten",
+    "invalid_duration": "Geben Sie eine Dauer größer als null ein",
+    "activity": {
+      "created": "hat {duration} erfasst",
+      "updated": "hat die erfasste Zeit von {old} auf {new} geändert",
+      "logged_at_updated": "hat einen Zeiteintrag von {old} auf {new} verschoben",
+      "description_updated": "hat die Notiz eines Zeiteintrags bearbeitet",
+      "deleted": "hat einen Zeiteintrag von {duration} entfernt"
+    }
   }
 }

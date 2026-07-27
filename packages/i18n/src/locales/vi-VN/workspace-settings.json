@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Nhật ký công việc",
         "heading": "Nhật ký công việc",
-        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào.",
+        "filters": {
+          "users": "Người dùng",
+          "projects": "Dự án",
+          "start_date": "Ngày bắt đầu",
+          "end_date": "Ngày kết thúc"
+        },
+        "table": {
+          "project": "Dự án",
+          "issue": "Mục công việc",
+          "logged": "Đã ghi nhận",
+          "time": "Thời gian",
+          "logged_by_on": "{name} vào {date}"
+        },
+        "total": "Tổng cho bộ lọc hiện tại: {duration}",
+        "download": "Tải xuống",
+        "previous_downloads": "Lượt tải xuống trước đó",
+        "export_status": {
+          "queued": "Đang chờ",
+          "processing": "Đang chuẩn bị",
+          "completed": "Sẵn sàng",
+          "failed": "Thất bại"
+        }
       },
       "group_syncing": {
         "title": "Đồng bộ nhóm",

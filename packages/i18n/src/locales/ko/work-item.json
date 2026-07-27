@@ -422,5 +422,25 @@
       "label": "에픽 제목",
       "required": "에픽 제목이 필요합니다."
     }
+  },
+  "worklog": {
+    "tracked_time": "추적된 시간",
+    "log_work": "작업 시간 기록",
+    "hours": "시간",
+    "minutes": "분",
+    "work_date": "날짜",
+    "description": "설명",
+    "save": "저장",
+    "cancel": "취소",
+    "delete_entry": "항목 삭제",
+    "edit_entry": "항목 편집",
+    "invalid_duration": "0보다 큰 기간을 입력하십시오",
+    "activity": {
+      "created": "{duration}을(를) 기록했습니다",
+      "updated": "기록된 시간을 {old}에서 {new}(으)로 변경했습니다",
+      "logged_at_updated": "시간 기록을 {old}에서 {new}(으)로 이동했습니다",
+      "description_updated": "시간 기록의 메모를 수정했습니다",
+      "deleted": "{duration}의 시간 기록을 삭제했습니다"
+    }
   }
 }

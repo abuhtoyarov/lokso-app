@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "워크로그",
         "heading": "워크로그",
-        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요."
+        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요.",
+        "filters": {
+          "users": "사용자",
+          "projects": "프로젝트",
+          "start_date": "시작 날짜",
+          "end_date": "종료 날짜"
+        },
+        "table": {
+          "project": "프로젝트",
+          "issue": "작업 항목",
+          "logged": "기록됨",
+          "time": "시간",
+          "logged_by_on": "{name} ({date})"
+        },
+        "total": "현재 필터의 합계: {duration}",
+        "download": "다운로드",
+        "previous_downloads": "이전 다운로드",
+        "export_status": {
+          "queued": "대기 중",
+          "processing": "준비 중",
+          "completed": "준비 완료",
+          "failed": "실패"
+        }
       },
       "group_syncing": {
         "title": "그룹 동기화",

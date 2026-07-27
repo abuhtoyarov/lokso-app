@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Pracovné záznamy",
         "heading": "Záznamy práce",
-        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte."
+        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte.",
+        "filters": {
+          "users": "Používatelia",
+          "projects": "Projekty",
+          "start_date": "Dátum začiatku",
+          "end_date": "Dátum konca"
+        },
+        "table": {
+          "project": "Projekt",
+          "issue": "Pracovná položka",
+          "logged": "Zaznamenané",
+          "time": "Čas",
+          "logged_by_on": "{name} dňa {date}"
+        },
+        "total": "Celkom za aktuálny filter: {duration}",
+        "download": "Stiahnuť",
+        "previous_downloads": "Predchádzajúce stiahnutia",
+        "export_status": {
+          "queued": "V poradí",
+          "processing": "Pripravuje sa",
+          "completed": "Pripravené",
+          "failed": "Neúspešné"
+        }
       },
       "group_syncing": {
         "title": "Synchronizácia skupín",

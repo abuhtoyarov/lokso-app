@@ -422,5 +422,25 @@
       "label": "史诗标题",
       "required": "史诗标题为必填项"
     }
+  },
+  "worklog": {
+    "tracked_time": "已跟踪时间",
+    "log_work": "记录工时",
+    "hours": "小时",
+    "minutes": "分钟",
+    "work_date": "日期",
+    "description": "描述",
+    "save": "保存",
+    "cancel": "取消",
+    "delete_entry": "删除记录",
+    "edit_entry": "编辑记录",
+    "invalid_duration": "请输入大于零的时长",
+    "activity": {
+      "created": "记录了 {duration}",
+      "updated": "将记录时间从 {old} 改为 {new}",
+      "logged_at_updated": "将一条时间记录从 {old} 移动到 {new}",
+      "description_updated": "编辑了一条时间记录的备注",
+      "deleted": "删除了一条 {duration} 的时间记录"
+    }
   }
 }

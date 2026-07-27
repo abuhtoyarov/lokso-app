@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Pracovní záznamy",
         "heading": "Pracovní záznamy",
-        "description": "Stáhněte si pracovní záznamy neboli časové výkazy pro kohokoli v jakémkoli projektu."
+        "description": "Stáhněte si pracovní záznamy neboli časové výkazy pro kohokoli v jakémkoli projektu.",
+        "filters": {
+          "users": "Uživatelé",
+          "projects": "Projekty",
+          "start_date": "Datum začátku",
+          "end_date": "Datum ukončení"
+        },
+        "table": {
+          "project": "Projekt",
+          "issue": "Pracovní položka",
+          "logged": "Zaznamenáno",
+          "time": "Čas",
+          "logged_by_on": "{name} dne {date}"
+        },
+        "total": "Celkem za aktuální filtr: {duration}",
+        "download": "Stáhnout",
+        "previous_downloads": "Předchozí stažení",
+        "export_status": {
+          "queued": "Ve frontě",
+          "processing": "Připravuje se",
+          "completed": "Připraveno",
+          "failed": "Neúspěšné"
+        }
       },
       "group_syncing": {
         "title": "Synchronizace skupin",

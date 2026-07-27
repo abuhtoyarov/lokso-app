@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Timer } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -42,6 +43,7 @@ import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
+import { IssueWorklog } from "./worklog";
 
 type Props = {
   workspaceSlug: string;
@@ -248,6 +250,21 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 disabled={!isEditable}
               />
             </SidebarPropertyListItem>
+
+            {projectDetails?.is_time_tracking_enabled && (
+              <SidebarPropertyListItem
+                icon={Timer}
+                label={t("worklog.tracked_time")}
+                childrenClassName="flex-col items-start"
+              >
+                <IssueWorklog
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  disabled={!isEditable}
+                />
+              </SidebarPropertyListItem>
+            )}
           </div>
         </div>
       </div>

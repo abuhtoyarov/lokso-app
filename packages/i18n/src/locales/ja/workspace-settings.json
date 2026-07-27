@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "作業ログ",
         "heading": "作業ログ",
-        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。"
+        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。",
+        "filters": {
+          "users": "ユーザー",
+          "projects": "プロジェクト",
+          "start_date": "開始日",
+          "end_date": "終了日"
+        },
+        "table": {
+          "project": "プロジェクト",
+          "issue": "作業項目",
+          "logged": "記録",
+          "time": "時間",
+          "logged_by_on": "{name}（{date}）"
+        },
+        "total": "現在のフィルターの合計：{duration}",
+        "download": "ダウンロード",
+        "previous_downloads": "過去のダウンロード",
+        "export_status": {
+          "queued": "待機中",
+          "processing": "準備中",
+          "completed": "準備完了",
+          "failed": "失敗"
+        }
       },
       "group_syncing": {
         "title": "グループ同期",

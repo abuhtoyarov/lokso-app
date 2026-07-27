@@ -187,7 +187,29 @@
       "worklogs": {
         "title": "Registros de trabalho",
         "heading": "Registros de trabalho",
-        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto."
+        "description": "Baixe registros de trabalho, também conhecidos como folhas de ponto, de qualquer pessoa em qualquer projeto.",
+        "filters": {
+          "users": "Usuários",
+          "projects": "Projetos",
+          "start_date": "Data de início",
+          "end_date": "Data de término"
+        },
+        "table": {
+          "project": "Projeto",
+          "issue": "Item de trabalho",
+          "logged": "Registrado",
+          "time": "Tempo",
+          "logged_by_on": "{name} em {date}"
+        },
+        "total": "Total do filtro atual: {duration}",
+        "download": "Baixar",
+        "previous_downloads": "Downloads anteriores",
+        "export_status": {
+          "queued": "Na fila",
+          "processing": "Preparando",
+          "completed": "Pronto",
+          "failed": "Falha"
+        }
       },
       "group_syncing": {
         "title": "Sincronização de grupos",
