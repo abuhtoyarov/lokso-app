@@ -27,6 +27,7 @@ import {
   IssueModuleActivity,
   IssueLabelActivity,
   IssueLinkActivity,
+  IssueWorklogActivity,
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
   IssueInboxActivity,
@@ -84,6 +85,10 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       return <IssueLabelActivity {...componentDefaultProps} showIssue={false} />;
     case "link":
       return <IssueLinkActivity {...componentDefaultProps} showIssue={false} />;
+    case "worklog":
+    case "worklog_logged_at":
+    case "worklog_description":
+      return <IssueWorklogActivity {...componentDefaultProps} showIssue={false} />;
     case "attachment":
       return <IssueAttachmentActivity {...componentDefaultProps} showIssue={false} />;
     case "archived_at":
