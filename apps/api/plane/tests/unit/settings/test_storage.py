@@ -5,6 +5,7 @@
 import os
 from unittest.mock import Mock, patch
 import pytest
+from django.test import RequestFactory
 from plane.settings.storage import S3Storage
 
 
@@ -204,3 +205,105 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+# The storage layer serves two audiences with different addresses.
+#
+# Presigned URLs are handed to a browser and must point somewhere the browser
+# can reach. Server-side calls run inside the network and must not go out
+# through the public host. One client cannot do both.
+
+
+def _request():
+    return RequestFactory().post("/api/assets/", HTTP_HOST="localhost:8000")
+
+
+@pytest.fixture
+def minio_env(monkeypatch):
+    """MinIO enabled, internal endpoint set, no public endpoint configured."""
+    monkeypatch.setenv("USE_MINIO", "1")
+    monkeypatch.setenv("AWS_S3_ENDPOINT_URL", "http://plane-minio:9000")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "uploads")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test-key")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+    monkeypatch.setenv("AWS_REGION", "us-east-1")
+    monkeypatch.delenv("MINIO_PUBLIC_ENDPOINT_URL", raising=False)
+    monkeypatch.delenv("MINIO_ENDPOINT_SSL", raising=False)
+
+
+@pytest.mark.unit
+def test_server_client_ignores_the_request_host(minio_env):
+    """Server-side calls must reach storage directly, never via the public host."""
+    storage = S3Storage(request=_request())
+    assert storage.s3_client.meta.endpoint_url == "http://plane-minio:9000"
+
+
+@pytest.mark.unit
+def test_presigned_client_uses_the_request_host_by_default(minio_env):
+    """Production behaviour, unchanged: same origin as the request, which the
+    proxy then routes to storage."""
+    storage = S3Storage(request=_request())
+    assert storage.presigned_client.meta.endpoint_url == "http://localhost:8000"
+
+
+@pytest.mark.unit
+def test_public_endpoint_overrides_the_request_host(minio_env, monkeypatch):
+    """Local development: no proxy, so the browser is told where MinIO really is."""
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://localhost:9000")
+    storage = S3Storage(request=_request())
+    assert storage.presigned_client.meta.endpoint_url == "http://localhost:9000"
+    assert storage.s3_client.meta.endpoint_url == "http://plane-minio:9000"
+
+
+@pytest.mark.unit
+def test_presigned_client_falls_back_to_the_internal_endpoint(minio_env):
+    """Background tasks have no request and no browser to serve."""
+    storage = S3Storage()
+    assert storage.presigned_client.meta.endpoint_url == "http://plane-minio:9000"
+
+
+@pytest.mark.unit
+def test_public_endpoint_applies_without_a_request(minio_env, monkeypatch):
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://localhost:9000")
+    storage = S3Storage()
+    assert storage.presigned_client.meta.endpoint_url == "http://localhost:9000"
+
+
+@pytest.mark.unit
+def test_ssl_flag_still_governs_the_request_derived_scheme(minio_env, monkeypatch):
+    monkeypatch.setenv("MINIO_ENDPOINT_SSL", "1")
+    storage = S3Storage(request=_request())
+    assert storage.presigned_client.meta.endpoint_url == "https://localhost:8000"
+
+
+@pytest.mark.unit
+def test_real_s3_is_untouched(monkeypatch):
+    """USE_MINIO=0 means a real S3 endpoint; neither client derives from the request."""
+    monkeypatch.setenv("USE_MINIO", "0")
+    monkeypatch.setenv("AWS_S3_ENDPOINT_URL", "https://s3.example.com")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "uploads")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test-key")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+    monkeypatch.setenv("AWS_REGION", "us-east-1")
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://localhost:9000")
+
+    storage = S3Storage(request=_request())
+    assert storage.s3_client.meta.endpoint_url == "https://s3.example.com"
+    assert storage.presigned_client.meta.endpoint_url == "https://s3.example.com"
+
+
+@pytest.mark.unit
+def test_presigned_post_url_points_at_the_public_endpoint(minio_env, monkeypatch):
+    """The end result a browser receives, not just the client configuration."""
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://localhost:9000")
+    storage = S3Storage(request=_request())
+    post = storage.generate_presigned_post("cover.png", "image/png", 1000)
+    assert post["url"].startswith("http://localhost:9000")
+
+
+@pytest.mark.unit
+def test_presigned_download_url_points_at_the_public_endpoint(minio_env, monkeypatch):
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://localhost:9000")
+    storage = S3Storage(request=_request())
+    url = storage.generate_presigned_url("cover.png")
+    assert url.startswith("http://localhost:9000")
