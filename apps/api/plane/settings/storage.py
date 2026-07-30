@@ -37,7 +37,10 @@ class S3Storage(S3Boto3Storage):
         # host the API was reached on. Production leaves this unset: the proxy
         # serves the bucket path on the API's own host, so a presigned URL
         # derived from the request is same-origin and works. Local development
-        # has no such proxy, so it points straight at MinIO.
+        # has no such proxy, so it points straight at MinIO. Must be the exact
+        # host the browser uses, and that Host header must survive end to end:
+        # a presigned URL's signature covers the host, so a proxy that rewrites
+        # it produces SignatureDoesNotMatch.
         self.minio_public_endpoint_url = os.environ.get("MINIO_PUBLIC_ENDPOINT_URL")
         # Use the SIGNED_URL_EXPIRATION environment variable for the expiration time (default: 3600 seconds)
         self.signed_url_expiration = int(os.environ.get("SIGNED_URL_EXPIRATION", "3600"))
@@ -58,8 +61,17 @@ class S3Storage(S3Boto3Storage):
             elif request:
                 presigned_endpoint_url = f"{endpoint_protocol}://{request.get_host()}"
 
-            self.s3_client = self._build_client(self.aws_s3_endpoint_url)
-            self.presigned_client = self._build_client(presigned_endpoint_url)
+            # No internal endpoint configured (neither AWS_S3_ENDPOINT_URL nor
+            # MINIO_ENDPOINT_URL): fall back to whatever the presigned client
+            # resolved to, so this still works the way it did before the two
+            # clients were split apart.
+            server_endpoint_url = self.aws_s3_endpoint_url or presigned_endpoint_url
+
+            self.s3_client = self._build_client(server_endpoint_url)
+            if presigned_endpoint_url == server_endpoint_url:
+                self.presigned_client = self.s3_client
+            else:
+                self.presigned_client = self._build_client(presigned_endpoint_url)
         else:
             # A real S3 endpoint serves both audiences.
             self.s3_client = self._build_client(self.aws_s3_endpoint_url)

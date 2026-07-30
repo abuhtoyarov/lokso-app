@@ -307,3 +307,88 @@ def test_presigned_download_url_points_at_the_public_endpoint(minio_env, monkeyp
     storage = S3Storage(request=_request())
     url = storage.generate_presigned_url("cover.png")
     assert url.startswith("http://localhost:9000")
+
+
+@pytest.mark.unit
+def test_presigned_download_url_matches_production_when_public_endpoint_is_unset(minio_env):
+    """The requirement that governs this whole change: with MINIO_PUBLIC_ENDPOINT_URL
+    unset, a presigned URL in production is unchanged. Assert that at the level a
+    user actually experiences it -- the URL itself -- not just the client's
+    endpoint configuration."""
+    storage = S3Storage(request=_request())
+    url = storage.generate_presigned_url("cover.png")
+    assert url.startswith("http://localhost:8000")
+
+
+@pytest.mark.unit
+def test_server_client_falls_back_to_the_request_host_when_no_internal_endpoint_is_configured(monkeypatch):
+    """Before the client split, one request-scoped instance derived a working
+    endpoint from the request host, so USE_MINIO=1 with neither AWS_S3_ENDPOINT_URL
+    nor MINIO_ENDPOINT_URL set still worked. The split broke that: s3_client was
+    built with endpoint_url=None and boto3 fell through to a bogus AWS default,
+    raising ValueError. Pin the fix: construction must not raise, and the server
+    client must fall back to the same host the presigned client resolves to."""
+    monkeypatch.setenv("USE_MINIO", "1")
+    monkeypatch.delenv("AWS_S3_ENDPOINT_URL", raising=False)
+    monkeypatch.delenv("MINIO_ENDPOINT_URL", raising=False)
+    monkeypatch.delenv("MINIO_PUBLIC_ENDPOINT_URL", raising=False)
+    monkeypatch.delenv("MINIO_ENDPOINT_SSL", raising=False)
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "uploads")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test-key")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+    monkeypatch.setenv("AWS_REGION", "us-east-1")
+
+    storage = S3Storage(request=_request())
+
+    assert storage.s3_client.meta.endpoint_url == "http://localhost:8000"
+
+
+@pytest.mark.unit
+def test_reuses_one_client_when_endpoints_match(monkeypatch):
+    """When the resolved presigned endpoint equals the internal endpoint, building
+    two identical boto3 clients is pure overhead on a call path (request-scoped
+    instantiation) that runs on every asset request."""
+    monkeypatch.setenv("USE_MINIO", "1")
+    monkeypatch.setenv("AWS_S3_ENDPOINT_URL", "http://plane-minio:9000")
+    monkeypatch.setenv("MINIO_PUBLIC_ENDPOINT_URL", "http://plane-minio:9000")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "uploads")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test-key")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test-secret")
+    monkeypatch.setenv("AWS_REGION", "us-east-1")
+
+    storage = S3Storage(request=_request())
+
+    assert storage.s3_client is storage.presigned_client
+
+
+@pytest.mark.unit
+def test_server_methods_use_the_server_client_not_the_presigned_client(minio_env):
+    """upload_file, delete_files, copy_object and get_object_metadata are
+    server-side calls and must go out through s3_client. This is the entire
+    point of the client split -- upload_file is the OAuth-avatar path the split
+    exists to fix -- so pin it with an assertion that can actually catch a swap.
+    The other tests in this module mock boto3 wholesale, which makes s3_client
+    and presigned_client the same mock and can't detect a method wired to the
+    wrong one; here the two endpoints differ, so each client is a distinct mock
+    object and we can assert on which one a call reached."""
+    with patch("plane.settings.storage.boto3") as mock_boto3:
+        mock_boto3.client.side_effect = lambda *args, **kwargs: Mock()
+        storage = S3Storage(request=_request())
+
+        # Sanity check that the test setup can actually distinguish the two.
+        assert storage.s3_client is not storage.presigned_client
+
+        storage.upload_file(Mock(), "object.png")
+        storage.delete_files(["object.png"])
+        storage.copy_object("object.png", "object-copy.png")
+        storage.get_object_metadata("object.png")
+
+    storage.s3_client.upload_fileobj.assert_called_once()
+    storage.s3_client.delete_objects.assert_called_once()
+    storage.s3_client.copy_object.assert_called_once()
+    storage.s3_client.head_object.assert_called_once()
+
+    storage.presigned_client.upload_fileobj.assert_not_called()
+    storage.presigned_client.delete_objects.assert_not_called()
+    storage.presigned_client.copy_object.assert_not_called()
+    storage.presigned_client.head_object.assert_not_called()
