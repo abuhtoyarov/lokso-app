@@ -48,6 +48,7 @@ Read the output against this table:
 | `api` container `Up` but `curl :8000` never responds, logs stuck on migrations | Started `api` (Option A) without `migrator` on a fresh DB — the entrypoint waits for migrations but never applies them | `docker compose -f docker-compose-local.yml up -d migrator`, then restart `api` |
 | `curl :3000` returns `000`                                                     | Frontend not running                                                                                                   | See "Run the frontend"                                                          |
 | No `dist` directories under `packages`                                         | Internal packages not built                                                                                            | `pnpm turbo run build --filter='web^...'`                                       |
+| File upload fails, or an uploaded attachment/cover/avatar won't open           | `MINIO_PUBLIC_ENDPOINT_URL` not set in `apps/api/.env`                                                                 | Set `MINIO_PUBLIC_ENDPOINT_URL="http://localhost:9000"`                         |
 
 ## Bring up infrastructure
 
