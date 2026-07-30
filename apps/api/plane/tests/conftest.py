@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import pytest
+from django.core.cache import cache
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 
@@ -14,6 +15,27 @@ from plane.db.models.api import APIToken
 def django_db_setup(django_db_setup):  # noqa: F811
     """Set up the Django database for the test session"""
     pass
+
+
+@pytest.fixture(autouse=True)
+def _reset_throttle_state():
+    """Give every test its own rate-limit budget.
+
+    Throttle counters live in the cache, which is a real shared Redis in this
+    suite — they are not rolled back with the database. Anonymous throttles are
+    keyed by client IP and every test shares one, and ``api_token`` below hands
+    out the same token string to all of them, so without this a long enough run
+    exhausts the budget and later tests fail with 429 or RATE_LIMIT_EXCEEDED
+    for reasons that have nothing to do with what they assert. Failures of that
+    kind move around as tests are added or reordered, which makes them look
+    like flakes rather than the pollution they are.
+
+    Tests that exercise throttling on purpose still work: they build up their
+    own counter inside the test, after this has run.
+    """
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture
