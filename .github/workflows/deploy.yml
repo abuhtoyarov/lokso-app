@@ -1,0 +1,105 @@
+name: Deploy
+
+# Катит на сервер образы, которые уже собрал build-images.yml.
+#
+# Запуск ручной намеренно. Стенд один и он боевой: автодеплой на каждый push
+# в main означал бы, что незамеченная правка едет к живым пользователям без
+# чьего-либо решения. Собирается всё по-прежнему автоматически — выкладывается
+# только по кнопке.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Полный SHA коммита, образы которого уже в GHCR. Пусто — текущий main."
+        required: false
+        type: string
+
+concurrency:
+  # Два одновременных деплоя на один сервер подрались бы за kamal-proxy.
+  # Очередь, а не отмена: прерванный на середине деплой оставит стенд
+  # с частью сервисов старой версии.
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -n "$INPUT_VERSION" ]; then
+            SHA="$INPUT_VERSION"
+          else
+            SHA="$(git rev-parse HEAD)"
+          fi
+          # Значение приходит из формы запуска и попадает в аргументы kamal.
+          # Запускать может только тот, у кого есть доступ на запись, но
+          # проверка стоит одну строку: всё, что не похоже на полный SHA,
+          # дальше не идёт.
+          if ! printf '%s' "$SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::Ожидался полный SHA из 40 hex-символов, получено: $SHA"
+            exit 1
+          fi
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Start SSH agent
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          # Ключ приходит в агент через stdin, а не через файл: на диске
+          # раннера он не появляется даже на секунду.
+          eval "$(ssh-agent -s)"
+          echo "$SSH_PRIVATE_KEY" | ssh-add -
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          # Отпечаток сервера сверяется с заранее сохранённым, иначе
+          # подмена хоста прошла бы незамеченной.
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          # Внутри Actions GITHUB_TOKEN достаточно, чтобы забрать образы из
+          # GHCR этого же репозитория, и он протухает вместе с job.
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          LIVE_SERVER_SECRET_KEY: ${{ secrets.LIVE_SERVER_SECRET_KEY }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          VERSION: ${{ steps.version.outputs.sha }}
+        run: |
+          set -euo pipefail
+
+          # Миграции накатывает роль api при старте, отдельного шага нет.
+          # back идёт первым: worker и beat ждут миграций, а фронтенды без
+          # живого API покажут пустую оболочку.
+          #
+          # -P: не собирать и не пушить, образы уже лежат в GHCR.
+          # Общую часть из config/deploy.yml Kamal подмешивает сам по -d.
+          for destination in back web admin space live; do
+            bundle exec kamal deploy -P -d "$destination" --version="$VERSION"
+          done

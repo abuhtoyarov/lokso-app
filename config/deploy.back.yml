@@ -1,0 +1,119 @@
+# Образы собирает CI, Kamal их только тянет — отсюда -P во всех командах.
+#
+# Миграции накатывает роль api при старте, в ./bin/docker-entrypoint-api.sh.
+# Worker и beat начинают с wait_for_migrations и разблокируются сами.
+#
+# Первый запуск на пустом сервере: сначала `kamal setup -d back`.
+
+service: lokso-api
+image: abuhtoyarov/lokso-backend
+
+servers:
+  api:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-api.sh
+  worker:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-worker.sh
+  beat:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-beat.sh
+
+primary_role: api
+
+proxy:
+  ssl: true
+  host: app.lokso.ru
+  app_port: 8000
+  path_prefix: /api,/auth,/static
+  # Django ждёт полные пути: его urls.py начинается с "api/instances/", а не с
+  # "instances/". Срезанный префикс превратил бы каждый маршрут в 404.
+  strip_path_prefix: false
+  healthcheck:
+    path: /api/instances/
+
+env:
+  clear:
+    # Хранилище — Cloud.ru Object Storage, снаружи сервера. USE_MINIO=0
+    # отправляет и серверные вызовы, и подписанные ссылки на один адрес,
+    # так что браузер ходит в хранилище напрямую, мимо прокси.
+    USE_MINIO: 0
+    AWS_REGION: ru-central-1
+    AWS_S3_ENDPOINT_URL: https://s3.cloud.ru
+    AWS_S3_BUCKET_NAME: lokso
+
+    WEB_URL: https://app.lokso.ru
+    APP_BASE_URL: https://app.lokso.ru
+    ADMIN_BASE_URL: https://app.lokso.ru
+    SPACE_BASE_URL: https://app.lokso.ru
+    LIVE_BASE_URL: https://app.lokso.ru
+    ADMIN_BASE_PATH: /god-mode
+    SPACE_BASE_PATH: /spaces
+    LIVE_BASE_PATH: /live
+    APP_BASE_PATH: ""
+    CORS_ALLOWED_ORIGINS: https://app.lokso.ru
+    ALLOWED_HOSTS: app.lokso.ru
+
+    POSTGRES_HOST: lokso-api-postgres
+    POSTGRES_PORT: 5432
+    POSTGRES_USER: lokso
+    POSTGRES_DB: lokso
+    REDIS_URL: redis://lokso-api-redis:6379/
+    RABBITMQ_HOST: lokso-api-rabbitmq
+    RABBITMQ_PORT: 5672
+    RABBITMQ_USER: lokso
+    RABBITMQ_VHOST: lokso
+
+    # Значение по умолчанию для конфигурации инстанса. После первого запуска
+    # почта правится в god-mode без передеплоя.
+    EMAIL_HOST: mail.lokso.ru
+    EMAIL_PORT: 587
+
+    GUNICORN_WORKERS: 2
+    DEBUG: 0
+    FILE_SIZE_LIMIT: 5242880
+  secret:
+    - SECRET_KEY
+    # Общий с сервисом live: тот сверяет им входящие запросы
+    # (apps/live/src/lib/auth-middleware.ts). Значения обязаны совпадать.
+    - LIVE_SERVER_SECRET_KEY
+    - POSTGRES_PASSWORD
+    - RABBITMQ_PASSWORD
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+
+accessories:
+  postgres:
+    image: postgres:17.10-alpine
+    role: api
+    # Порт наружу не публикуем: сервер смотрит в интернет. Контейнеры
+    # приложения ходят сюда по имени внутри общей docker-сети.
+    env:
+      clear:
+        POSTGRES_USER: lokso
+        POSTGRES_DB: lokso
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+
+  redis:
+    image: valkey/valkey:7.2.11-alpine
+    role: api
+    directories:
+      - data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13.6-management-alpine
+    role: api
+    env:
+      clear:
+        RABBITMQ_DEFAULT_USER: lokso
+        RABBITMQ_DEFAULT_VHOST: lokso
+      secret:
+        - RABBITMQ_DEFAULT_PASS
+    directories:
+      - data:/var/lib/rabbitmq

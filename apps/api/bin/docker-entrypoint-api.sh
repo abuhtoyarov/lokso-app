@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 python manage.py wait_for_db
-# Wait for migrations
-python manage.py wait_for_migrations
 
-# Create the default bucket
-#!/bin/bash
+# Apply migrations here rather than as a separate deploy step. The worker and
+# beat entrypoints both start with wait_for_migrations, so they unblock on
+# their own once this finishes — there is no ordering left to get wrong.
+#
+# This role is the only one that migrates, and it runs as a single replica.
+python manage.py migrate
 
 # Collect system information
 HOSTNAME=$(hostname)

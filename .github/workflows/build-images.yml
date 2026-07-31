@@ -1,0 +1,83 @@
+name: Build and publish images
+
+# Builds the five images a deployment needs and pushes them to GHCR. Kamal does
+# not build anything itself — it is invoked with `-P --version=<sha>` and pulls
+# the tag this workflow produced, so a deploy is only ever a pull and a restart.
+#
+# The Caddy proxy image from deployments/cli/community/build.yml is deliberately
+# absent: kamal-proxy does that routing on the server.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    name: Build ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The backend builds from apps/api; the frontends need the whole
+          # monorepo because they pull in packages/*. Both mirror the contexts
+          # in deployments/cli/community/build.yml.
+          - image: lokso-backend
+            context: apps/api
+            dockerfile: apps/api/Dockerfile.api
+          - image: lokso-frontend
+            context: .
+            dockerfile: apps/web/Dockerfile.web
+          - image: lokso-admin
+            context: .
+            dockerfile: apps/admin/Dockerfile.admin
+          - image: lokso-space
+            context: .
+            dockerfile: apps/space/Dockerfile.space
+          - image: lokso-live
+            context: .
+            dockerfile: apps/live/Dockerfile.live
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          # The deploy server is amd64. Building a second architecture would
+          # roughly double CI time for an image nothing would pull.
+          platforms: linux/amd64
+          push: true
+          # No build args. Every VITE_*_BASE_URL defaults to an empty string,
+          # which makes the frontends address each other with same-origin
+          # relative paths — and all five services answer on one host. That
+          # keeps these images free of any one environment's addresses.
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}

@@ -1,0 +1,16 @@
+service: lokso-space
+image: abuhtoyarov/lokso-space
+
+servers:
+  web:
+    hosts:
+      - 176.108.250.162
+
+proxy:
+  ssl: true
+  host: app.lokso.ru
+  app_port: 3000
+  path_prefix: /spaces
+  # react-router-serve отдаёт приложение под /spaces — это видно по healthcheck
+  # в Dockerfile.space, который бьёт в 127.0.0.1:3000/spaces/.
+  strip_path_prefix: false
