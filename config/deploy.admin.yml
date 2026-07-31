@@ -7,13 +7,7 @@ servers:
       - 176.108.250.162
 
 proxy:
-  # TLS задаёт только сервис, держащий корень хоста (config/deploy.web.yml):
-  # сертификат на хост один, и владелец у него один. Здесь ssl привёл бы к
-  # "TLS settings must be specified on the root path service".
   host: app.lokso.ru
   app_port: 3000
   path_prefix: /god-mode
-  # Dockerfile.admin кладёт сборку в /usr/share/nginx/html/god-mode, а nginx
-  # падает в try_files на /god-mode/index.html. Nginx ждёт путь с префиксом:
-  # срежем — получим 404 на каждом запросе, включая ассеты.
   strip_path_prefix: false

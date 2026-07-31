@@ -1,5 +1,3 @@
-# Catch-all: забирает всё, что не подошло под более длинный префикс другого
-# сервиса — kamal-proxy выбирает по самому длинному совпадению.
 service: lokso-web
 image: abuhtoyarov/lokso-frontend
 

@@ -7,12 +7,7 @@ servers:
       - 176.108.250.162
 
 proxy:
-  # TLS задаёт только сервис, держащий корень хоста (config/deploy.web.yml):
-  # сертификат на хост один, и владелец у него один. Здесь ssl привёл бы к
-  # "TLS settings must be specified on the root path service".
   host: app.lokso.ru
   app_port: 3000
   path_prefix: /spaces
-  # react-router-serve отдаёт приложение под /spaces — это видно по healthcheck
-  # в Dockerfile.space, который бьёт в 127.0.0.1:3000/spaces/.
   strip_path_prefix: false
