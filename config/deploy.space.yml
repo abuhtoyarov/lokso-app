@@ -1,7 +1,3 @@
-# Публичные страницы на /spaces.
-#
-#   kamal deploy -P -c config/deploy.space.yml --version=<sha>
-
 service: lokso-space
 image: abuhtoyarov/lokso-space
 

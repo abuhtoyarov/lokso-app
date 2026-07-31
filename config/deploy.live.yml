@@ -1,7 +1,3 @@
-# Сервер совместного редактирования на /live.
-#
-#   kamal deploy -P -c config/deploy.live.yml --version=<sha>
-
 service: lokso-live
 image: abuhtoyarov/lokso-live
 

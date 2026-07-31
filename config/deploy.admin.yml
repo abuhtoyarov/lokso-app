@@ -1,7 +1,3 @@
-# Панель администратора на /god-mode.
-#
-#   kamal deploy -P -c config/deploy.admin.yml --version=<sha>
-
 service: lokso-admin
 image: abuhtoyarov/lokso-admin
 

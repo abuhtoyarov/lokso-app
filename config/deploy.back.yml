@@ -1,29 +1,9 @@
-# Бэкенд Локсо: один образ, три роли.
+# Образы собирает CI, Kamal их только тянет — отсюда -P во всех командах.
 #
-# Образы собирает GitHub Actions (.github/workflows/build-images.yml), Kamal их
-# только тянет. Поэтому деплой всегда идёт с -P (пропустить сборку и push).
+# Миграции накатывает роль api при старте, в ./bin/docker-entrypoint-api.sh.
+# Worker и beat начинают с wait_for_migrations и разблокируются сами.
 #
-# Общая часть — в config/deploy.yml, Kamal подмешивает её сам по -d back.
-# Фронтенды живут в config/deploy.<destination>.yml. Все пять сервисов
-# отвечают на одном хосте, kamal-proxy разводит их по префиксам пути.
-
-# Порядок обычного деплоя:
-#
-#   bundle exec kamal deploy -P -d back   --version=<sha>
-#   bundle exec kamal deploy -P -d web    --version=<sha>
-#   bundle exec kamal deploy -P -d admin  --version=<sha>
-#   bundle exec kamal deploy -P -d space  --version=<sha>
-#   bundle exec kamal deploy -P -d live   --version=<sha>
-#
-# Миграции отдельным шагом не идут: их накатывает роль api при старте, в
-# ./bin/docker-entrypoint-api.sh. Worker и beat начинают с
-# wait_for_migrations и разблокируются сами.
-#
-# Первый запуск отличается: сначала `kamal setup -d back`, он поднимет
-# аксессуары и создаст сеть.
-#
-# Только bundle exec: алиас `kamal` в оболочке указывает на 1.9.0, а это
-# конфиг второй версии.
+# Первый запуск на пустом сервере: сначала `kamal setup -d back`.
 
 service: lokso-api
 image: abuhtoyarov/lokso-backend
@@ -42,8 +22,6 @@ servers:
       - 176.108.250.162
     cmd: ./bin/docker-entrypoint-beat.sh
 
-# Прокси включается только для основной роли, worker и beat остаются без него
-# сами собой — они не слушают HTTP.
 primary_role: api
 
 proxy:
@@ -109,8 +87,8 @@ env:
 
 accessories:
   postgres:
-    image: postgres:15.7-alpine
-    host: 176.108.250.162
+    image: postgres:17.10-alpine
+    role: api
     # Порт наружу не публикуем: сервер смотрит в интернет. Контейнеры
     # приложения ходят сюда по имени внутри общей docker-сети.
     env:
@@ -124,13 +102,13 @@ accessories:
 
   redis:
     image: valkey/valkey:7.2.11-alpine
-    host: 176.108.250.162
+    role: api
     directories:
       - data:/data
 
   rabbitmq:
     image: rabbitmq:3.13.6-management-alpine
-    host: 176.108.250.162
+    role: api
     env:
       clear:
         RABBITMQ_DEFAULT_USER: lokso
