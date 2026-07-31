@@ -17,14 +17,4 @@ proxy:
   host: app.lokso.ru
   app_port: 3000
 
-registry:
-  server: ghcr.io
-  username: abuhtoyarov
-  password:
-    - KAMAL_REGISTRY_PASSWORD
-
-builder:
-  arch: amd64
-
-ssh:
-  user: apps
+<%= File.binread("config/common.yml") %>

@@ -60,17 +60,7 @@ proxy:
   healthcheck:
     path: /api/instances/
 
-registry:
-  server: ghcr.io
-  username: abuhtoyarov
-  password:
-    - KAMAL_REGISTRY_PASSWORD
-
-builder:
-  arch: amd64
-
-ssh:
-  user: apps
+<%= File.binread("config/common.yml") %>
 
 aliases:
   # Разовый контейнер из того же образа: накатывает миграции и выходит.

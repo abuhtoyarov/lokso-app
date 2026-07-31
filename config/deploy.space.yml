@@ -19,14 +19,4 @@ proxy:
   # в Dockerfile.space, который бьёт в 127.0.0.1:3000/spaces/.
   strip_path_prefix: false
 
-registry:
-  server: ghcr.io
-  username: abuhtoyarov
-  password:
-    - KAMAL_REGISTRY_PASSWORD
-
-builder:
-  arch: amd64
-
-ssh:
-  user: apps
+<%= File.binread("config/common.yml") %>
