@@ -58,6 +58,10 @@ env:
 
     EMAIL_HOST: mail.lokso.ru
     EMAIL_PORT: 587
+    EMAIL_USE_TLS: 1
+    EMAIL_USE_SSL: 0
+    EMAIL_HOST_USER: no-reply@lokso.ru
+    EMAIL_FROM: "Локсо <no-reply@lokso.ru>"
 
     GUNICORN_WORKERS: 2
     DEBUG: 0
@@ -69,6 +73,7 @@ env:
     - RABBITMQ_PASSWORD
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
+    - EMAIL_HOST_PASSWORD
 
 accessories:
   postgres:
