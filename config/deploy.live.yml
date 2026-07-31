@@ -19,8 +19,6 @@ proxy:
   # то есть ждёт путь вместе с префиксом.
   strip_path_prefix: false
 
-<%= File.binread("config/common.yml") %>
-
 env:
   clear:
     # Живёт на том же хосте, поэтому ходит в API через публичный адрес.

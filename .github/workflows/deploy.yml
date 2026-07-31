@@ -94,15 +94,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Миграции до всего остального: три роли бэкенда стартуют с
-          # wait_for_migrations и будут ждать молча, а не падать.
-          bundle exec kamal migrate --version="$VERSION"
-
+          # Миграции накатывает роль api при старте, отдельного шага нет.
+          # back идёт первым: worker и beat ждут миграций, а фронтенды без
+          # живого API покажут пустую оболочку.
+          #
           # -P: не собирать и не пушить, образы уже лежат в GHCR.
-          bundle exec kamal deploy -P --version="$VERSION"
-
-          for config in web admin space live; do
-            bundle exec kamal deploy -P \
-              -c "config/deploy.$config.yml" \
-              --version="$VERSION"
+          # Общую часть из config/deploy.yml Kamal подмешивает сам по -d.
+          for destination in back web admin space live; do
+            bundle exec kamal deploy -P -d "$destination" --version="$VERSION"
           done

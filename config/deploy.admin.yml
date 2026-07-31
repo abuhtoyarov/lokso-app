@@ -19,5 +19,3 @@ proxy:
   # падает в try_files на /god-mode/index.html. Nginx ждёт путь с префиксом:
   # срежем — получим 404 на каждом запросе, включая ассеты.
   strip_path_prefix: false
-
-<%= File.binread("config/common.yml") %>
