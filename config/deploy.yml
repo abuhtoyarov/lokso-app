@@ -1,0 +1,160 @@
+# Бэкенд Локсо: один образ, три роли.
+#
+# Образы собирает GitHub Actions (.github/workflows/build-images.yml), Kamal их
+# только тянет. Поэтому деплой всегда идёт с -P (пропустить сборку и push):
+#
+#   kamal deploy -P --version=<sha>
+#
+# Фронтенды живут в отдельных конфигах config/deploy.<name>.yml и катятся
+# через -c. Все пять сервисов отвечают на одном хосте, kamal-proxy разводит их
+# по префиксам пути.
+
+# Порядок обычного деплоя:
+#
+#   bundle exec kamal migrate                       # накатить миграции
+#   bundle exec kamal deploy -P --version=<sha>     # бэкенд: api, worker, beat
+#   bundle exec kamal deploy -P -c config/deploy.web.yml   --version=<sha>
+#   bundle exec kamal deploy -P -c config/deploy.admin.yml --version=<sha>
+#   bundle exec kamal deploy -P -c config/deploy.space.yml --version=<sha>
+#   bundle exec kamal deploy -P -c config/deploy.live.yml  --version=<sha>
+#
+# Миграции идут отдельным шагом и до деплоя намеренно. Все три роли
+# бэкенда начинают с wait_for_migrations: запусти их раньше миграций —
+# контейнеры не упадут, а тихо повиснут в ожидании.
+#
+# Первый запуск отличается: сначала `kamal setup`, он поднимет аксессуары
+# и создаст сеть, и только потом миграции.
+#
+# Только bundle exec: алиас `kamal` в оболочке указывает на 1.9.0, а это
+# конфиг второй версии.
+
+service: lokso-api
+image: abuhtoyarov/lokso-backend
+
+servers:
+  api:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-api.sh
+  worker:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-worker.sh
+  beat:
+    hosts:
+      - 176.108.250.162
+    cmd: ./bin/docker-entrypoint-beat.sh
+
+# Прокси включается только для основной роли, worker и beat остаются без него
+# сами собой — они не слушают HTTP.
+primary_role: api
+
+proxy:
+  ssl: true
+  host: app.lokso.ru
+  app_port: 8000
+  path_prefix: /api,/auth,/static
+  # Django ждёт полные пути: его urls.py начинается с "api/instances/", а не с
+  # "instances/". Срезанный префикс превратил бы каждый маршрут в 404.
+  strip_path_prefix: false
+  healthcheck:
+    path: /api/instances/
+
+registry:
+  server: ghcr.io
+  username: abuhtoyarov
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+ssh:
+  user: apps
+
+aliases:
+  # Разовый контейнер из того же образа: накатывает миграции и выходит.
+  migrate: app exec -r api "./bin/docker-entrypoint-migrator.sh"
+
+env:
+  clear:
+    # Хранилище — Cloud.ru Object Storage, снаружи сервера. USE_MINIO=0
+    # отправляет и серверные вызовы, и подписанные ссылки на один адрес,
+    # так что браузер ходит в хранилище напрямую, мимо прокси.
+    USE_MINIO: 0
+    AWS_REGION: ru-central-1
+    AWS_S3_ENDPOINT_URL: https://s3.cloud.ru
+    AWS_S3_BUCKET_NAME: lokso
+
+    WEB_URL: https://app.lokso.ru
+    APP_BASE_URL: https://app.lokso.ru
+    ADMIN_BASE_URL: https://app.lokso.ru
+    SPACE_BASE_URL: https://app.lokso.ru
+    LIVE_BASE_URL: https://app.lokso.ru
+    ADMIN_BASE_PATH: /god-mode
+    SPACE_BASE_PATH: /spaces
+    LIVE_BASE_PATH: /live
+    APP_BASE_PATH: ""
+    CORS_ALLOWED_ORIGINS: https://app.lokso.ru
+    ALLOWED_HOSTS: app.lokso.ru
+
+    POSTGRES_HOST: lokso-api-postgres
+    POSTGRES_PORT: 5432
+    POSTGRES_USER: lokso
+    POSTGRES_DB: lokso
+    REDIS_URL: redis://lokso-api-redis:6379/
+    RABBITMQ_HOST: lokso-api-rabbitmq
+    RABBITMQ_PORT: 5672
+    RABBITMQ_USER: lokso
+    RABBITMQ_VHOST: lokso
+
+    # Значение по умолчанию для конфигурации инстанса. После первого запуска
+    # почта правится в god-mode без передеплоя.
+    EMAIL_HOST: mail.lokso.ru
+    EMAIL_PORT: 587
+
+    GUNICORN_WORKERS: 2
+    DEBUG: 0
+    FILE_SIZE_LIMIT: 5242880
+  secret:
+    - SECRET_KEY
+    # Общий с сервисом live: тот сверяет им входящие запросы
+    # (apps/live/src/lib/auth-middleware.ts). Значения обязаны совпадать.
+    - LIVE_SERVER_SECRET_KEY
+    - POSTGRES_PASSWORD
+    - RABBITMQ_PASSWORD
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+
+accessories:
+  postgres:
+    image: postgres:15.7-alpine
+    host: 176.108.250.162
+    # Порт наружу не публикуем: сервер смотрит в интернет. Контейнеры
+    # приложения ходят сюда по имени внутри общей docker-сети.
+    env:
+      clear:
+        POSTGRES_USER: lokso
+        POSTGRES_DB: lokso
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+
+  redis:
+    image: valkey/valkey:7.2.11-alpine
+    host: 176.108.250.162
+    directories:
+      - data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.13.6-management-alpine
+    host: 176.108.250.162
+    env:
+      clear:
+        RABBITMQ_DEFAULT_USER: lokso
+        RABBITMQ_DEFAULT_VHOST: lokso
+      secret:
+        - RABBITMQ_DEFAULT_PASS
+    directories:
+      - data:/var/lib/rabbitmq

@@ -1,0 +1,30 @@
+# Основное веб-приложение. Catch-all: забирает всё, что не подошло под более
+# длинный префикс другого сервиса — kamal-proxy выбирает по самому длинному
+# совпадению, так что /spaces, /god-mode, /live и /api уходят своим.
+#
+#   kamal deploy -P -c config/deploy.web.yml --version=<sha>
+
+service: lokso-web
+image: abuhtoyarov/lokso-frontend
+
+servers:
+  web:
+    hosts:
+      - 176.108.250.162
+
+proxy:
+  ssl: true
+  host: app.lokso.ru
+  app_port: 3000
+
+registry:
+  server: ghcr.io
+  username: abuhtoyarov
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+ssh:
+  user: apps

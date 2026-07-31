@@ -1,0 +1,33 @@
+# Панель администратора на /god-mode.
+#
+#   kamal deploy -P -c config/deploy.admin.yml --version=<sha>
+
+service: lokso-admin
+image: abuhtoyarov/lokso-admin
+
+servers:
+  web:
+    hosts:
+      - 176.108.250.162
+
+proxy:
+  ssl: true
+  host: app.lokso.ru
+  app_port: 3000
+  path_prefix: /god-mode
+  # Dockerfile.admin кладёт сборку в /usr/share/nginx/html/god-mode, а nginx
+  # падает в try_files на /god-mode/index.html. Nginx ждёт путь с префиксом:
+  # срежем — получим 404 на каждом запросе, включая ассеты.
+  strip_path_prefix: false
+
+registry:
+  server: ghcr.io
+  username: abuhtoyarov
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+ssh:
+  user: apps
