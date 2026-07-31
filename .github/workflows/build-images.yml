@@ -12,10 +12,6 @@ on:
   push:
     branches:
       - "main"
-      # Временно: проверить сборку до мерджа. GitHub не даёт запустить
-      # workflow вручную, пока его нет в основной ветке, поэтому единственный
-      # способ прогнать его на ветке — триггер по push. Убрать перед мерджем.
-      - "chore/kamal-deploy"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
