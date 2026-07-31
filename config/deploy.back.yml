@@ -56,11 +56,11 @@ env:
     RABBITMQ_USER: lokso
     RABBITMQ_VHOST: lokso
 
-    EMAIL_HOST: mail.lokso.ru
+    EMAIL_HOST: mail.r2d2.dev
     EMAIL_PORT: 587
     EMAIL_USE_TLS: 1
     EMAIL_USE_SSL: 0
-    EMAIL_HOST_USER: no-reply@lokso.ru
+    EMAIL_HOST_USER: no-reply
     EMAIL_FROM: "Локсо <no-reply@lokso.ru>"
 
     GUNICORN_WORKERS: 2
