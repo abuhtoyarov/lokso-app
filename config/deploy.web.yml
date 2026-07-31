@@ -10,3 +10,5 @@ proxy:
   ssl: true
   host: app.lokso.ru
   app_port: 3000
+  healthcheck:
+    path: /

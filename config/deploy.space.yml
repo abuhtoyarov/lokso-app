@@ -11,3 +11,5 @@ proxy:
   app_port: 3000
   path_prefix: /spaces
   strip_path_prefix: false
+  healthcheck:
+    path: /spaces/

@@ -11,6 +11,8 @@ proxy:
   app_port: 3000
   path_prefix: /live
   strip_path_prefix: false
+  healthcheck:
+    path: /live/health
 
 env:
   clear:
