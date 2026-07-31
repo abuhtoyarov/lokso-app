@@ -1,19 +1,3 @@
-# Общая часть всех конфигов Kamal. Приложения тут нет — ни service, ни image,
-# ни servers.
-#
-# Kamal сам подмешивает этот файл к config/deploy.<destination>.yml, когда
-# деплой запускается с -d. Ничего подключать руками не нужно:
-#
-#   bundle exec kamal deploy -P -d back   --version=<sha>   # api, worker, beat
-#   bundle exec kamal deploy -P -d web    --version=<sha>
-#   bundle exec kamal deploy -P -d admin  --version=<sha>
-#   bundle exec kamal deploy -P -d space  --version=<sha>
-#   bundle exec kamal deploy -P -d live   --version=<sha>
-#
-# Отсюда же следует, почему секреты лежат в .kamal/secrets-common, а не в
-# .kamal/secrets: при выбранном destination Kamal generic-файл игнорирует, и
-# .kamal/secrets просто не читался бы — молча, без ошибки.
-
 registry:
   server: ghcr.io
   username: abuhtoyarov

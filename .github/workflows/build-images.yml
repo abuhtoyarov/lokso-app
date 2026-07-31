@@ -1,12 +1,5 @@
 name: Build and publish images
 
-# Builds the five images a deployment needs and pushes them to GHCR. Kamal does
-# not build anything itself — it is invoked with `-P --version=<sha>` and pulls
-# the tag this workflow produced, so a deploy is only ever a pull and a restart.
-#
-# The Caddy proxy image from deployments/cli/community/build.yml is deliberately
-# absent: kamal-proxy does that routing on the server.
-
 on:
   workflow_dispatch:
   push:
@@ -32,14 +25,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # The backend builds from apps/api; the frontends need the whole
-          # monorepo because they pull in packages/*. Both mirror the contexts
-          # in deployments/cli/community/build.yml.
-          #
-          # `service` must equal the `service:` key of the matching config in
-          # config/. Kamal refuses to deploy an image whose `service` label
-          # does not match, and it normally applies that label while building.
-          # These images are built here instead, so the label is set here.
           - image: lokso-backend
             service: lokso-api
             context: apps/api
@@ -78,14 +63,8 @@ jobs:
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          # The deploy server is amd64. Building a second architecture would
-          # roughly double CI time for an image nothing would pull.
           platforms: linux/amd64
           push: true
-          # No build args. Every VITE_*_BASE_URL defaults to an empty string,
-          # which makes the frontends address each other with same-origin
-          # relative paths — and all five services answer on one host. That
-          # keeps these images free of any one environment's addresses.
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:latest

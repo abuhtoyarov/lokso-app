@@ -7,25 +7,16 @@ servers:
       - 176.108.250.162
 
 proxy:
-  # TLS задаёт только сервис, держащий корень хоста (config/deploy.web.yml):
-  # сертификат на хост один, и владелец у него один. Здесь ssl привёл бы к
-  # "TLS settings must be specified on the root path service".
   host: app.lokso.ru
   app_port: 3000
   path_prefix: /live
-  # Сервер монтирует роутер по LIVE_BASE_PATH (apps/live/src/server.ts:39),
-  # то есть ждёт путь вместе с префиксом.
   strip_path_prefix: false
 
 env:
   clear:
-    # Живёт на том же хосте, поэтому ходит в API через публичный адрес.
-    # Схема env.ts требует именно валидный URL, пустая строка не пройдёт.
     API_BASE_URL: https://app.lokso.ru
     CORS_ALLOWED_ORIGINS: https://app.lokso.ru
     LIVE_BASE_PATH: /live
     REDIS_URL: redis://lokso-api-redis:6379/
   secret:
-    # Тот же секрет, что у бэкенда: им live проверяет входящие запросы
-    # (apps/live/src/lib/auth-middleware.ts:38).
     - LIVE_SERVER_SECRET_KEY

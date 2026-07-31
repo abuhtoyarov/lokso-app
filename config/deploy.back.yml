@@ -1,20 +1,6 @@
-# Образы собирает CI, Kamal их только тянет — отсюда -P во всех командах.
-#
-# Миграции накатывает роль api при старте, в ./bin/docker-entrypoint-api.sh.
-# Worker и beat начинают с wait_for_migrations и разблокируются сами.
-#
-# Первый запуск на пустом сервере: сначала `kamal setup -d back`.
-
 service: lokso-api
 image: abuhtoyarov/lokso-backend
 
-# Роль api накатывает миграции до того, как начнёт отвечать. На пустой базе
-# это около ста двадцати миграций, и в отведённые Kamal 30 секунд они не
-# укладываются — контейнер убивался сигналом 137 на середине.
-#
-# Цена: сломанный бэкенд теперь тоже падает не сразу, а через десять минут.
-# Разменяно сознательно — при штатном деплое миграций единицы и запас не
-# расходуется, а вот первый запуск без него невозможен в принципе.
 deploy_timeout: 600
 
 servers:
@@ -34,23 +20,15 @@ servers:
 primary_role: api
 
 proxy:
-  # TLS задаёт только сервис, держащий корень хоста (config/deploy.web.yml):
-  # сертификат на хост один, и владелец у него один. Здесь ssl привёл бы к
-  # "TLS settings must be specified on the root path service".
   host: app.lokso.ru
   app_port: 8000
   path_prefix: /api,/auth,/static
-  # Django ждёт полные пути: его urls.py начинается с "api/instances/", а не с
-  # "instances/". Срезанный префикс превратил бы каждый маршрут в 404.
   strip_path_prefix: false
   healthcheck:
     path: /api/instances/
 
 env:
   clear:
-    # Хранилище — Cloud.ru Object Storage, снаружи сервера. USE_MINIO=0
-    # отправляет и серверные вызовы, и подписанные ссылки на один адрес,
-    # так что браузер ходит в хранилище напрямую, мимо прокси.
     USE_MINIO: 0
     AWS_REGION: ru-central-1
     AWS_S3_ENDPOINT_URL: https://s3.cloud.ru
@@ -66,13 +44,6 @@ env:
     LIVE_BASE_PATH: /live
     APP_BASE_PATH: ""
     CORS_ALLOWED_ORIGINS: https://app.lokso.ru
-    # Не app.lokso.ru: kamal-proxy проверяет здоровье контейнера по его
-    # внутреннему адресу, Django отвечал на такой Host кодом 400, прокси
-    # не признавал контейнер живым и ждал весь deploy_timeout.
-    #
-    # Ограничивать хост здесь и не нужно: прокси маршрутизирует на этот
-    # сервис только запросы к app.lokso.ru (--host), то есть проверка уже
-    # сделана слоем выше. Django бы её лишь повторил — и ломал внутренние.
     ALLOWED_HOSTS: "*"
 
     POSTGRES_HOST: lokso-api-postgres
@@ -85,8 +56,6 @@ env:
     RABBITMQ_USER: lokso
     RABBITMQ_VHOST: lokso
 
-    # Значение по умолчанию для конфигурации инстанса. После первого запуска
-    # почта правится в god-mode без передеплоя.
     EMAIL_HOST: mail.lokso.ru
     EMAIL_PORT: 587
 
@@ -95,8 +64,6 @@ env:
     FILE_SIZE_LIMIT: 5242880
   secret:
     - SECRET_KEY
-    # Общий с сервисом live: тот сверяет им входящие запросы
-    # (apps/live/src/lib/auth-middleware.ts). Значения обязаны совпадать.
     - LIVE_SERVER_SECRET_KEY
     - POSTGRES_PASSWORD
     - RABBITMQ_PASSWORD
@@ -107,8 +74,6 @@ accessories:
   postgres:
     image: postgres:17.10-alpine
     role: api
-    # Порт наружу не публикуем: сервер смотрит в интернет. Контейнеры
-    # приложения ходят сюда по имени внутри общей docker-сети.
     env:
       clear:
         POSTGRES_USER: lokso
