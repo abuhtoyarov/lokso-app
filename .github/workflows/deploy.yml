@@ -108,12 +108,14 @@ jobs:
             COMMAND=deploy
           fi
 
+          # web идёт первым, и это не косметика: он держит корень хоста и
+          # владеет сертификатом. Сервисы на префиксах пути регистрируются у
+          # kamal-proxy только после того, как корневой существует.
+          #
           # Миграции накатывает роль api при старте, отдельного шага нет.
-          # back идёт первым: worker и beat ждут миграций, а фронтенды без
-          # живого API покажут пустую оболочку.
           #
           # -P: не собирать и не пушить, образы уже лежат в GHCR.
           # Общую часть из config/deploy.yml Kamal подмешивает сам по -d.
-          for destination in back web admin space live; do
+          for destination in web back admin space live; do
             bundle exec kamal "$COMMAND" -P -d "$destination" --version="$VERSION"
           done
