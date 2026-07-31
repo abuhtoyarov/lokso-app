@@ -2,16 +2,27 @@ name: Deploy
 
 # Катит на сервер образы, которые уже собрал build-images.yml.
 #
-# Запуск ручной намеренно. Стенд один и он боевой: автодеплой на каждый push
-# в main означал бы, что незамеченная правка едет к живым пользователям без
-# чьего-либо решения. Собирается всё по-прежнему автоматически — выкладывается
-# только по кнопке.
+# Ставится в очередь сам, как только сборка в main прошла успешно, и ждёт
+# подтверждения на окружении production. Без клика по Review deployments
+# ничего не едет: стенд один и он боевой.
+#
+# Катятся только те сервисы, которых коснулись изменения. Собираются при
+# этом все пять — иначе для нового SHA не существовало бы тега у
+# неизменившихся, и --version для них не разрешился бы.
 
 on:
+  workflow_run:
+    workflows: ["Build and publish images"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       version:
         description: "Полный SHA коммита, образы которого уже в GHCR. Пусто — текущий main."
+        required: false
+        type: string
+      destinations:
+        description: "Что катить: back web admin space live через пробел. Пусто — определить по изменениям."
         required: false
         type: string
       first_run:
@@ -33,11 +44,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
+    # Автозапуск идёт и после неудачной сборки — на неё workflow_run тоже
+    # реагирует. Катить образы, которых нет, смысла нет.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       packages: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          # Нужны два коммита, чтобы увидеть, что изменилось.
+          fetch-depth: 2
+          # При автозапуске берём тот коммит, чьи образы собрались, а не
+          # верхушку main: она могла уйти вперёд, пока шла сборка.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Resolve version
         id: version
@@ -60,13 +82,76 @@ jobs:
           fi
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
+      - name: Choose destinations
+        id: targets
+        env:
+          INPUT_DESTINATIONS: ${{ inputs.destinations }}
+          FIRST_RUN: ${{ inputs.first_run }}
+        run: |
+          set -euo pipefail
+
+          valid="back web admin space live"
+
+          select_all() { echo "web back admin space live"; }
+
+          if [ -n "$INPUT_DESTINATIONS" ]; then
+            chosen="$INPUT_DESTINATIONS"
+          elif [ "$FIRST_RUN" = "true" ]; then
+            # Холодный старт поднимает всё независимо от изменений.
+            chosen="$(select_all)"
+          else
+            changed="$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")"
+            if [ -z "$changed" ]; then
+              # Первый коммит в истории или мелкая ветка — не гадаем.
+              chosen="$(select_all)"
+            else
+              set +e
+              picked=""
+              # packages/ — общий код четырёх фронтендов, правка там задевает
+              # все четыре образа сразу. Бэкенд на Python его не использует.
+              echo "$changed" | grep -qE '^(apps/api/|config/deploy\.back\.yml)' && picked="$picked back"
+              echo "$changed" | grep -qE '^(apps/web/|packages/|config/deploy\.web\.yml)' && picked="$picked web"
+              echo "$changed" | grep -qE '^(apps/admin/|packages/|config/deploy\.admin\.yml)' && picked="$picked admin"
+              echo "$changed" | grep -qE '^(apps/space/|packages/|config/deploy\.space\.yml)' && picked="$picked space"
+              echo "$changed" | grep -qE '^(apps/live/|packages/|config/deploy\.live\.yml)' && picked="$picked live"
+              # Общая часть конфигов и сам workflow касаются всех.
+              echo "$changed" | grep -qE '^(config/deploy\.yml|\.kamal/)' && picked="$(select_all)"
+              set -e
+              chosen="$picked"
+            fi
+          fi
+
+          # web держит корень хоста: сервисы на префиксах регистрируются у
+          # kamal-proxy только после него, поэтому он всегда идёт первым.
+          ordered=""
+          for d in web back admin space live; do
+            case " $chosen " in *" $d "*) ordered="$ordered $d";; esac
+          done
+
+          for d in $ordered; do
+            case " $valid " in
+              *" $d "*) ;;
+              *) echo "::error::Неизвестный destination: $d"; exit 1;;
+            esac
+          done
+
+          ordered="$(echo "$ordered" | xargs || true)"
+          if [ -z "$ordered" ]; then
+            echo "Изменения не затронули ни один сервис — деплой не нужен."
+          else
+            echo "Катим: $ordered"
+          fi
+          echo "list=$ordered" >> "$GITHUB_OUTPUT"
+
       - name: Set up Ruby
+        if: steps.targets.outputs.list != ''
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
           bundler-cache: true
 
       - name: Start SSH agent
+        if: steps.targets.outputs.list != ''
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
@@ -85,6 +170,7 @@ jobs:
           chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy
+        if: steps.targets.outputs.list != ''
         env:
           # Внутри Actions GITHUB_TOKEN достаточно, чтобы забрать образы из
           # GHCR этого же репозитория, и он протухает вместе с job.
@@ -97,6 +183,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           VERSION: ${{ steps.version.outputs.sha }}
           FIRST_RUN: ${{ inputs.first_run }}
+          DESTINATIONS: ${{ steps.targets.outputs.list }}
         run: |
           set -euo pipefail
 
@@ -108,14 +195,14 @@ jobs:
             COMMAND=deploy
           fi
 
-          # web идёт первым, и это не косметика: он держит корень хоста и
-          # владеет сертификатом. Сервисы на префиксах пути регистрируются у
-          # kamal-proxy только после того, как корневой существует.
+          # Список уже отсортирован на шаге выбора: web первым, потому что он
+          # держит корень хоста, а сервисы на префиксах регистрируются у
+          # kamal-proxy только после корневого.
           #
           # Миграции накатывает роль api при старте, отдельного шага нет.
           #
           # -P: не собирать и не пушить, образы уже лежат в GHCR.
           # Общую часть из config/deploy.yml Kamal подмешивает сам по -d.
-          for destination in web back admin space live; do
+          for destination in $DESTINATIONS; do
             bundle exec kamal "$COMMAND" -P -d "$destination" --version="$VERSION"
           done
