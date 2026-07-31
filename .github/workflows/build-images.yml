@@ -35,19 +35,29 @@ jobs:
           # The backend builds from apps/api; the frontends need the whole
           # monorepo because they pull in packages/*. Both mirror the contexts
           # in deployments/cli/community/build.yml.
+          #
+          # `service` must equal the `service:` key of the matching config in
+          # config/. Kamal refuses to deploy an image whose `service` label
+          # does not match, and it normally applies that label while building.
+          # These images are built here instead, so the label is set here.
           - image: lokso-backend
+            service: lokso-api
             context: apps/api
             dockerfile: apps/api/Dockerfile.api
           - image: lokso-frontend
+            service: lokso-web
             context: .
             dockerfile: apps/web/Dockerfile.web
           - image: lokso-admin
+            service: lokso-admin
             context: .
             dockerfile: apps/admin/Dockerfile.admin
           - image: lokso-space
+            service: lokso-space
             context: .
             dockerfile: apps/space/Dockerfile.space
           - image: lokso-live
+            service: lokso-live
             context: .
             dockerfile: apps/live/Dockerfile.live
     steps:
@@ -79,5 +89,7 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.image }}:latest
+          labels: |
+            service=${{ matrix.service }}
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image }}
