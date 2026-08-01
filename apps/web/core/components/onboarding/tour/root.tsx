@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { CloseIcon, LoksoLockup } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 // assets
 import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
 import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
@@ -80,6 +81,7 @@ const TOUR_STEPS: {
 
 export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) {
   const { onComplete } = props;
+  const { t } = useTranslation();
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
@@ -135,6 +137,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
             type="button"
             className="fixed top-[19%] right-[9%] z-10 translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border border-strong bg-surface-1 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
+            aria-label={t("close")}
           >
             <CloseIcon className="border-strong- h-3 w-3 text-primary" />
           </button>

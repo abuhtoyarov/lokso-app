@@ -7,6 +7,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { LoksoLockup, ChevronLeftIcon } from "@plane/propel/icons";
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TOnboardingStep } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -25,6 +26,7 @@ type OnboardingHeaderProps = {
 
 export const OnboardingHeader = observer(function OnboardingHeader(props: OnboardingHeaderProps) {
   const { currentStep, updateCurrentStep, hasInvitations } = props;
+  const { t } = useTranslation();
   // store hooks
   const { data: user } = useUser();
   const { config: instanceConfig } = useInstance();
@@ -79,7 +81,13 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
       <div className={cn("flex w-full items-center justify-between gap-6 px-6", canGoBack && "pr-6 pl-4")}>
         <div className="flex items-center gap-2.5">
           {canGoBack && (
-            <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
+            <button
+              onClick={handleStepBack}
+              className="cursor-pointer"
+              type="button"
+              disabled={!canGoBack}
+              aria-label={t("common.back")}
+            >
               <ChevronLeftIcon className="size-6 text-placeholder" />
             </button>
           )}
