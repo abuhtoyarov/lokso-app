@@ -1,0 +1,56 @@
+name: Activity field coverage
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "main"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+    paths:
+      - "apps/api/plane/bgtasks/issue_activities_task.py"
+      - "apps/web/core/components/issues/issue-detail/issue-activity/**"
+      - "apps/web/core/components/core/activity.tsx"
+      - "scripts/activity-field-coverage.ts"
+      - ".github/workflows/activity-field-coverage.yml"
+  push:
+    branches:
+      - "main"
+    paths:
+      - "apps/api/plane/bgtasks/issue_activities_task.py"
+      - "apps/web/core/components/issues/issue-detail/issue-activity/**"
+      - "apps/web/core/components/core/activity.tsx"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    name: check:activity-fields
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          filter: blob:none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Check activity field coverage
+        run: pnpm dlx tsx scripts/activity-field-coverage.ts
