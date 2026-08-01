@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Timer } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -37,6 +38,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
+import { IssueWorklog } from "../issue-detail/worklog";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
@@ -243,6 +245,16 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={LabelPropertyIcon} label={t("common.labels")}>
           <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
         </SidebarPropertyListItem>
+
+        {projectDetails?.is_time_tracking_enabled && (
+          <SidebarPropertyListItem
+            icon={Timer}
+            label={t("worklog.tracked_time")}
+            childrenClassName="flex-col items-start"
+          >
+            <IssueWorklog workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+          </SidebarPropertyListItem>
+        )}
       </div>
     </div>
   );
