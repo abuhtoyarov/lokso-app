@@ -20,6 +20,7 @@ class ExporterHistorySerializer(BaseSerializer):
             "project",
             "provider",
             "status",
+            "reason",
             "url",
             "initiated_by",
             "initiated_by_detail",

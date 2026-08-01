@@ -66,16 +66,15 @@ export type TWorklogExportInitiator = {
  * A row of `ExporterHistory`, as serialized by `ExporterHistorySerializer` for
  * `type="issue_worklogs"`.
  *
- * Note: the underlying `ExporterHistory` model also has `reason` and `filters`
- * columns, but `ExporterHistorySerializer.Meta.fields` does not include them —
- * they never reach the client. A failed export's failure reason and a past
- * export's original filters are therefore not recoverable from this endpoint
- * today.
+ * Note: the model also has a `filters` column that the serializer still omits,
+ * so a past export's original filters are not recoverable from this endpoint.
  */
 export type TWorklogExport = {
   id: string;
   provider: TWorklogExportProvider;
   status: TWorklogExportStatus;
+  /** Empty unless the export failed — carries the exception text from the task. */
+  reason: string;
   /** Present only once status is "completed". */
   url: string | null;
   initiated_by: string;

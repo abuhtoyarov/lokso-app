@@ -87,8 +87,8 @@ export const WorklogExportHistory = observer(function WorklogExportHistory(props
             {t(`workspace_settings.settings.worklogs.export_status.${row.status}`)}
           </span>
           {row.status === "failed" && (
-            <span className="text-11 text-danger-primary">
-              {t("workspace_settings.settings.exports.modal.toasts.error.message")}
+            <span className="text-11 break-all text-danger-primary">
+              {row.reason?.trim() || t("workspace_settings.settings.exports.modal.toasts.error.message")}
             </span>
           )}
         </div>

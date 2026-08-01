@@ -46,6 +46,8 @@ export interface IExportData {
   project: string[];
   provider: string;
   status: string;
+  /** Empty unless the export failed — carries the exception text from the task. */
+  reason: string;
   url: string;
   token: string;
   created_by: string;
