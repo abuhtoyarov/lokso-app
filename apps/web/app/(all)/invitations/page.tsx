@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 
@@ -50,6 +50,8 @@ function UserInvitationsPage() {
   const { fetchWorkspaces } = useWorkspace();
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS", () => workspaceService.userWorkspaceInvitations());
+
+  const selectedInvitations = useMemo(() => new Set(invitationsRespond), [invitationsRespond]);
 
   const redirectWorkspaceSlug =
     // currentUserSettings?.workspace?.last_workspace_slug ||
@@ -132,7 +134,7 @@ function UserInvitationsPage() {
                 <h4 className="text-20 font-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
-                    const isSelected = invitationsRespond.includes(invitation.id);
+                    const isSelected = selectedInvitations.has(invitation.id);
 
                     return (
                       <button
