@@ -75,21 +75,26 @@ export const useExportColumns = () => {
       key: "Status",
       content: "Status",
       tdRender: (rowData: RowData) => (
-        <span
-          className={`rounded-sm px-2 py-1 text-11 capitalize ${
-            rowData.status === "completed"
-              ? "bg-success-subtle text-success-primary"
-              : rowData.status === "processing"
-                ? "bg-yellow-500/20 text-yellow-500"
-                : rowData.status === "failed"
-                  ? "bg-danger-subtle text-danger-primary"
-                  : rowData.status === "expired"
-                    ? "bg-orange-500/20 text-orange-500"
-                    : "bg-gray-500/20 text-gray-500"
-          }`}
-        >
-          {rowData.status}
-        </span>
+        <div className="flex flex-col items-start gap-1">
+          <span
+            className={`rounded-sm px-2 py-1 text-11 capitalize ${
+              rowData.status === "completed"
+                ? "bg-success-subtle text-success-primary"
+                : rowData.status === "processing"
+                  ? "bg-yellow-500/20 text-yellow-500"
+                  : rowData.status === "failed"
+                    ? "bg-danger-subtle text-danger-primary"
+                    : rowData.status === "expired"
+                      ? "bg-orange-500/20 text-orange-500"
+                      : "bg-gray-500/20 text-gray-500"
+            }`}
+          >
+            {rowData.status}
+          </span>
+          {rowData.status === "failed" && rowData.reason?.trim() && (
+            <span className="text-11 break-all text-danger-primary">{rowData.reason}</span>
+          )}
+        </div>
       ),
     },
     {
