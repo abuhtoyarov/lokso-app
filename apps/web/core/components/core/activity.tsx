@@ -34,52 +34,13 @@ import {
   RelatedIcon,
   WorkItemsIcon,
 } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import { useTranslation } from "@plane/i18n";
 import type { IIssueActivity } from "@plane/types";
-import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter, formatWorklogDuration } from "@plane/utils";
+import { IssueLink } from "./activity-issue-link";
+import { WorklogActivityMessage } from "./worklog-activity-message";
+import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-
-export function IssueLink({ activity }: { activity: IIssueActivity }) {
-  // router params
-  const { workspaceSlug } = useParams();
-  const { isMobile } = usePlatformOS();
-
-  const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug?.toString() ?? activity.workspace_detail?.slug,
-    projectId: activity?.project,
-    issueId: activity?.issue,
-    projectIdentifier: activity?.project_detail?.identifier,
-    sequenceId: activity?.issue_detail?.sequence_id,
-  });
-
-  return (
-    <Tooltip
-      tooltipContent={activity?.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
-      isMobile={isMobile}
-    >
-      {activity?.issue_detail ? (
-        <a
-          aria-disabled={activity.issue === null}
-          href={workItemLink}
-          target={activity.issue === null ? "_self" : "_blank"}
-          rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline items-center gap-1 font-medium text-primary hover:underline"
-        >
-          <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
-          <span className="font-regular break-all">{activity.issue_detail?.name}</span>
-        </a>
-      ) : (
-        <span className="inline-flex items-center gap-1 font-medium whitespace-nowrap text-primary">
-          {" a work item"}{" "}
-        </span>
-      )}
-    </Tooltip>
-  );
-}
 
 function UserLink({ activity }: { activity: IIssueActivity }) {
   // router params
@@ -151,43 +112,6 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
       return "updated intake work item status.";
   }
 };
-
-function WorklogActivityMessage({ activity, showIssue }: { activity: IIssueActivity; showIssue: boolean }) {
-  const { t } = useTranslation();
-
-  let message: string;
-  if (activity.field === "worklog") {
-    if (activity.verb === "created") {
-      message = t("worklog.activity.created", { duration: formatWorklogDuration(Number(activity.new_value)) });
-    } else if (activity.verb === "updated") {
-      message = t("worklog.activity.updated", {
-        old: formatWorklogDuration(Number(activity.old_value)),
-        new: formatWorklogDuration(Number(activity.new_value)),
-      });
-    } else {
-      message = t("worklog.activity.deleted", { duration: formatWorklogDuration(Number(activity.old_value)) });
-    }
-  } else if (activity.field === "worklog_logged_at") {
-    message = t("worklog.activity.logged_at_updated", {
-      old: renderFormattedDate(activity.old_value ?? ""),
-      new: renderFormattedDate(activity.new_value ?? ""),
-    });
-  } else {
-    message = t("worklog.activity.description_updated");
-  }
-
-  return (
-    <>
-      {message}
-      {showIssue && (
-        <>
-          {" "}
-          {t("worklog.activity.for_issue")} <IssueLink activity={activity} />
-        </>
-      )}
-    </>
-  );
-}
 
 const activityDetails: {
   [key: string]: {
@@ -824,3 +748,5 @@ export function ActivityMessage({ activity, showIssue = false }: ActivityMessage
     </>
   );
 }
+
+export { IssueLink };
