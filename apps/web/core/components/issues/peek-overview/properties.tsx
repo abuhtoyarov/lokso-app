@@ -41,7 +41,7 @@ import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { IssueWorklog } from "../issue-detail/worklog/tracked-time";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
-import { IssueLabel } from "../issue-detail/label";
+import { IssueLabel } from "../issue-detail/label/root";
 import { IssueModuleSelect } from "../issue-detail/module-select";
 
 interface IPeekOverviewProperties {
