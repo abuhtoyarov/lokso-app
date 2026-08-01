@@ -440,7 +440,8 @@
       "updated": "hat die erfasste Zeit von {old} auf {new} geändert",
       "logged_at_updated": "hat einen Zeiteintrag von {old} auf {new} verschoben",
       "description_updated": "hat die Notiz eines Zeiteintrags bearbeitet",
-      "deleted": "hat einen Zeiteintrag von {duration} entfernt"
+      "deleted": "hat einen Zeiteintrag von {duration} entfernt",
+      "for_issue": "für"
     }
   }
 }

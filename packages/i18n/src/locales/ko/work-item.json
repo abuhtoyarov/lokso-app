@@ -440,7 +440,8 @@
       "updated": "기록된 시간을 {old}에서 {new}(으)로 변경했습니다",
       "logged_at_updated": "시간 기록을 {old}에서 {new}(으)로 이동했습니다",
       "description_updated": "시간 기록의 메모를 수정했습니다",
-      "deleted": "{duration}의 시간 기록을 삭제했습니다"
+      "deleted": "{duration}의 시간 기록을 삭제했습니다",
+      "for_issue": "—"
     }
   }
 }

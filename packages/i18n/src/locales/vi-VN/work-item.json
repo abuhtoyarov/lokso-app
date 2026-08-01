@@ -440,7 +440,8 @@
       "updated": "đã thay đổi thời gian ghi nhận từ {old} thành {new}",
       "logged_at_updated": "đã di chuyển một mục thời gian từ {old} sang {new}",
       "description_updated": "đã chỉnh sửa ghi chú của một mục thời gian",
-      "deleted": "đã xóa một mục thời gian {duration}"
+      "deleted": "đã xóa một mục thời gian {duration}",
+      "for_issue": "cho"
     }
   }
 }

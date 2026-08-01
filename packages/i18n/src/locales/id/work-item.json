@@ -440,7 +440,8 @@
       "updated": "mengubah waktu tercatat dari {old} menjadi {new}",
       "logged_at_updated": "memindahkan entri waktu dari {old} ke {new}",
       "description_updated": "mengedit catatan entri waktu",
-      "deleted": "menghapus entri waktu sebesar {duration}"
+      "deleted": "menghapus entri waktu sebesar {duration}",
+      "for_issue": "pada"
     }
   }
 }

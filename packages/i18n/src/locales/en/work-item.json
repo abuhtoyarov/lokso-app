@@ -440,7 +440,8 @@
       "updated": "changed logged time from {old} to {new}",
       "logged_at_updated": "moved a time entry from {old} to {new}",
       "description_updated": "edited a time entry's note",
-      "deleted": "removed a time entry of {duration}"
+      "deleted": "removed a time entry of {duration}",
+      "for_issue": "for"
     }
   }
 }

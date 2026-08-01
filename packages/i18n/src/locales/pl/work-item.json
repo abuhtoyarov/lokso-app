@@ -440,7 +440,8 @@
       "updated": "zmienia zarejestrowany czas z {old} na {new}",
       "logged_at_updated": "przenosi wpis czasu z {old} na {new}",
       "description_updated": "edytuje notatkę wpisu czasu",
-      "deleted": "usuwa wpis czasu o długości {duration}"
+      "deleted": "usuwa wpis czasu o długości {duration}",
+      "for_issue": "w"
     }
   }
 }

@@ -440,7 +440,8 @@
       "updated": "alterou o tempo registrado de {old} para {new}",
       "logged_at_updated": "moveu um registro de tempo de {old} para {new}",
       "description_updated": "editou a nota de um registro de tempo",
-      "deleted": "removeu um registro de tempo de {duration}"
+      "deleted": "removeu um registro de tempo de {duration}",
+      "for_issue": "em"
     }
   }
 }

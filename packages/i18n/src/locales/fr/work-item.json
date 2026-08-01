@@ -440,7 +440,8 @@
       "updated": "a changé le temps enregistré de {old} à {new}",
       "logged_at_updated": "a déplacé une entrée de temps de {old} à {new}",
       "description_updated": "a modifié la note d’une entrée de temps",
-      "deleted": "a supprimé une entrée de temps de {duration}"
+      "deleted": "a supprimé une entrée de temps de {duration}",
+      "for_issue": "pour"
     }
   }
 }

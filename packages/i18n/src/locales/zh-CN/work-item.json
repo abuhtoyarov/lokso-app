@@ -440,7 +440,8 @@
       "updated": "将记录时间从 {old} 改为 {new}",
       "logged_at_updated": "将一条时间记录从 {old} 移动到 {new}",
       "description_updated": "编辑了一条时间记录的备注",
-      "deleted": "删除了一条 {duration} 的时间记录"
+      "deleted": "删除了一条 {duration} 的时间记录",
+      "for_issue": "—"
     }
   }
 }
