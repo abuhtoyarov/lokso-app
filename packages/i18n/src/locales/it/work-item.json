@@ -440,7 +440,8 @@
       "updated": "ha cambiato il tempo registrato da {old} a {new}",
       "logged_at_updated": "ha spostato una voce di tempo da {old} a {new}",
       "description_updated": "ha modificato la nota di una voce di tempo",
-      "deleted": "ha rimosso una voce di tempo di {duration}"
+      "deleted": "ha rimosso una voce di tempo di {duration}",
+      "for_issue": "su"
     }
   }
 }

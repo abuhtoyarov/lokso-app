@@ -440,7 +440,8 @@
       "updated": "記録時間を{old}から{new}に変更しました",
       "logged_at_updated": "時間記録を{old}から{new}に移動しました",
       "description_updated": "時間記録のメモを編集しました",
-      "deleted": "{duration}の時間記録を削除しました"
+      "deleted": "{duration}の時間記録を削除しました",
+      "for_issue": "—"
     }
   }
 }

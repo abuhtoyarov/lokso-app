@@ -440,7 +440,8 @@
       "updated": "kaydedilen süreyi {old}’den {new}’e değiştirdi",
       "logged_at_updated": "bir zaman kaydını {old} tarihinden {new} tarihine taşıdı",
       "description_updated": "bir zaman kaydının notunu düzenledi",
-      "deleted": "{duration} süresindeki bir zaman kaydını kaldırdı"
+      "deleted": "{duration} süresindeki bir zaman kaydını kaldırdı",
+      "for_issue": "—"
     }
   }
 }

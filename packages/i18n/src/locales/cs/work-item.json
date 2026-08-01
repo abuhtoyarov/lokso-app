@@ -440,7 +440,8 @@
       "updated": "mění zaznamenaný čas z {old} na {new}",
       "logged_at_updated": "přesouvá záznam času z {old} na {new}",
       "description_updated": "upravuje poznámku k záznamu času",
-      "deleted": "odstraňuje záznam času v délce {duration}"
+      "deleted": "odstraňuje záznam času v délce {duration}",
+      "for_issue": "u"
     }
   }
 }

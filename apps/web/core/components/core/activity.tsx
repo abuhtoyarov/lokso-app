@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from "react";
+import { Timer } from "lucide-react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // store hooks
@@ -34,8 +35,9 @@ import {
   WorkItemsIcon,
 } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { useTranslation } from "@plane/i18n";
 import type { IIssueActivity } from "@plane/types";
-import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
+import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter, formatWorklogDuration } from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -150,12 +152,61 @@ const getInboxUserActivityMessage = (activity: IIssueActivity, showIssue: boolea
   }
 };
 
+function WorklogActivityMessage({ activity, showIssue }: { activity: IIssueActivity; showIssue: boolean }) {
+  const { t } = useTranslation();
+
+  let message: string;
+  if (activity.field === "worklog") {
+    if (activity.verb === "created") {
+      message = t("worklog.activity.created", { duration: formatWorklogDuration(Number(activity.new_value)) });
+    } else if (activity.verb === "updated") {
+      message = t("worklog.activity.updated", {
+        old: formatWorklogDuration(Number(activity.old_value)),
+        new: formatWorklogDuration(Number(activity.new_value)),
+      });
+    } else {
+      message = t("worklog.activity.deleted", { duration: formatWorklogDuration(Number(activity.old_value)) });
+    }
+  } else if (activity.field === "worklog_logged_at") {
+    message = t("worklog.activity.logged_at_updated", {
+      old: renderFormattedDate(activity.old_value ?? ""),
+      new: renderFormattedDate(activity.new_value ?? ""),
+    });
+  } else {
+    message = t("worklog.activity.description_updated");
+  }
+
+  return (
+    <>
+      {message}
+      {showIssue && (
+        <>
+          {" "}
+          {t("worklog.activity.for_issue")} <IssueLink activity={activity} />
+        </>
+      )}
+    </>
+  );
+}
+
 const activityDetails: {
   [key: string]: {
     message: (activity: IIssueActivity, showIssue: boolean, workspaceSlug: string) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
+  worklog: {
+    message: (activity, showIssue) => <WorklogActivityMessage activity={activity} showIssue={showIssue} />,
+    icon: <Timer size={12} className="text-secondary" aria-hidden="true" />,
+  },
+  worklog_logged_at: {
+    message: (activity, showIssue) => <WorklogActivityMessage activity={activity} showIssue={showIssue} />,
+    icon: <Timer size={12} className="text-secondary" aria-hidden="true" />,
+  },
+  worklog_description: {
+    message: (activity, showIssue) => <WorklogActivityMessage activity={activity} showIssue={showIssue} />,
+    icon: <Timer size={12} className="text-secondary" aria-hidden="true" />,
+  },
   assignees: {
     message: (activity, showIssue) => {
       if (activity.old_value === "")

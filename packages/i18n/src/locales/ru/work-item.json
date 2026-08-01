@@ -440,7 +440,8 @@
       "updated": "изменяет записанное время с {old} на {new}",
       "logged_at_updated": "переносит запись времени с {old} на {new}",
       "description_updated": "редактирует заметку к записи времени",
-      "deleted": "удаляет запись времени на {duration}"
+      "deleted": "удаляет запись времени на {duration}",
+      "for_issue": "по"
     }
   }
 }

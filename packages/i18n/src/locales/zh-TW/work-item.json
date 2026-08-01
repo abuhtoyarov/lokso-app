@@ -440,7 +440,8 @@
       "updated": "將記錄時間從 {old} 改為 {new}",
       "logged_at_updated": "將一筆時間記錄從 {old} 移動到 {new}",
       "description_updated": "編輯了一筆時間記錄的備註",
-      "deleted": "刪除了一筆 {duration} 的時間記錄"
+      "deleted": "刪除了一筆 {duration} 的時間記錄",
+      "for_issue": "—"
     }
   }
 }
