@@ -14,8 +14,8 @@ interface TermsAndConditionsProps {
 }
 
 const LEGAL_LINKS = {
-  "{terms}": "https://lokso.ru/legal/terms",
-  "{privacy}": "https://lokso.ru/legal/privacy",
+  "{terms}": "/legal/terms.html",
+  "{privacy}": "/legal/privacy.html",
 } as const;
 
 function LegalLink({ href, children }: { href: string; children: React.ReactNode }) {
