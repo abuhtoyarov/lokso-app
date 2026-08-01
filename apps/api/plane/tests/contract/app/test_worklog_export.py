@@ -211,3 +211,36 @@ def test_export_and_journal_querysets_agree_on_same_filters(db, workspace, seede
 
     assert journal_ids
     assert journal_ids == export_ids
+
+
+@pytest.mark.contract
+def test_upload_signs_with_the_configured_region(db, settings, workspace, create_user):
+    """Every S3 client the upload builds must sign with AWS_REGION.
+
+    Without it boto3 signs as us-east-1, and a storage provider outside AWS
+    rejects the request. Cloud.ru answers AuthorizationHeaderMalformed,
+    "unexpected region", and the export fails after the file is already built.
+    """
+    import io
+
+    from plane.bgtasks.export_task import upload_to_s3
+
+    settings.USE_MINIO = False
+    settings.AWS_S3_ENDPOINT_URL = "https://s3.example.ru"
+    settings.AWS_REGION = "ru-central-1"
+    settings.AWS_STORAGE_BUCKET_NAME = "bucket"
+
+    token = ExporterHistory.objects.create(
+        workspace=workspace, initiated_by=create_user, project=[],
+        provider="csv", type="issue_worklogs",
+    )
+
+    with patch("plane.bgtasks.export_task.boto3.client") as client:
+        client.return_value.generate_presigned_url.return_value = "https://example/x.zip"
+        upload_to_s3(io.BytesIO(b"zip"), token.workspace_id, str(token.token), "slug")
+
+    assert client.call_count >= 1
+    for call in client.call_args_list:
+        assert call.kwargs.get("region_name") == "ru-central-1", (
+            f"клиент S3 создан без региона: {call.kwargs.keys()}"
+        )
